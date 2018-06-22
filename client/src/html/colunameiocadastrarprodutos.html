@@ -1,0 +1,16 @@
+<div class="column middle">
+  <h1><img class="imgTitulo" src="../assets/gerenciar_estoque.png" alt="Cadastrar Animais"/></h1>
+  <div class="outer">
+    <div>
+      Nome: <br><input type="text" name="Nome" id="productName"><br><br>
+	    Foto: <br><img id="photo" src="../assets/pic.jpg" alt="Someone" style="width:130px; height:130px;"><br><input class="input2" type='file' onchange="readURL(this);"/><br><br>
+      Descricao: <br><input type="text" name="Descricao" id="descricao"><br><br>
+      Preco: <br><input type="number" name="Idade" id="price"><br><br>
+      Quantidade em estoque: <br><input type="number" name="QuantEstoque" id="stock"><br><br>
+      Quantidade vendida: <br><input type="number" name="QuantVendida" id="sold"><br><br>
+    </div>
+  </div>
+  <div class="center">
+    <button class="btn" type="button" onclick="registerProduct();">Finalizar</button>
+  </div>
+</div>

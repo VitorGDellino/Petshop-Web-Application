@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<hmtl lang="pt-br">
+  <head>
+      <title>TAMTAM's PETSHOP</title>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="./css/styles.css">
+  </head>
+
+  <body>
+      <div>
+        <div class="header">
+          <img class="logo" src="./assets/logo2.png" alt="LOGO"/>
+            <div style="float:right"  id="mutableCard">
+            <form id="login">
+              <input type="text" name="userName" placeholder="Username" required="required" />
+              <input type="password" name="passWord" placeholder="Password" required="required" />
+              <a class="button1About" onclick="userLogin();">Login</a>
+              <a class="button1About" onclick="adminLogin();">Login Admin</a>
+            </form>
+          </div>
+        </div>
+    </div>
+
+      <div id="mutableNavBar" class="topnav">
+        <div class="topnav">
+          <a onclick="goToHome()">HOME</a>
+          <a onclick="goToServices()">SERVIÇOS</a>
+          <a onclick="goToProducts()">PRODUTOS</a>
+          <a onclick="goToAbout()">ABOUT</a>
+        </div>
+      </div>
+
+      <div id="mutableContent">
+        <div class="row" id="pageContent">
+          <div class="containerHome" id="homeContent">
+            <div class="documentHome">
+              <h1>Confie na gente, amamos animais tanto quanto vocês.</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>
+          <p class="social">Redes Sociais</p>
+        </div>
+        <div class="div">
+          <a  class="icons" href="https://www.facebook.com"><img class="image" src="./assets/fb.png" alt="facebook"/></a>
+          <a  class="icons" href="https://www.google.com"><img class="image" src="./assets/insta.png" alt="instagram"/></a>
+          <a  class="icons" href="https://www.google.com"><img class="image" src="./assets/snap.png" alt="snapchat"/></a>
+        </div>
+        <div>
+          <p class="social">tamtam.petshop@gmail.com</p>
+        </div>
+        <div>
+          <p class="social">Tel: (11) 3554-3556</p>
+        </div>
+      </div>
+
+      <script src="./js/jquery.min.js"></script>
+      <script src="./js/db.js"></script>
+      <script src="./js/login.js"></script>
+  </body>
+</html>
