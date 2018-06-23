@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var Pet = require('../lib/pet');
 var User = require('../lib/user');
+var Product = require('../lib/product');
+var Service = require('../lib/service');
 
 router.get('/pets/:username', function(req, res){
      var login = req.params.username;
@@ -107,13 +109,37 @@ router.put('/userUpdate/:username', function(req, res){
      });
 });
 
-router.post('/dateservice', function(req, res){
+router.put('/dateservice', function(req, res){
+     var id = req.body.id;
+     var petname = req.body.petname;
 
+     Service.findOne({_id : id}, function(err, foundService){
+          if(err){
+               return res.status(500).send();
+          }
+
+          if(!foundService){
+               return res.status(404).send();
+          }
+
+          if(foundService.reserva !== "none"){
+               return res.send("Horário indisponível");
+          }
+
+          foundService.reserva = petname;
+
+          foundService.save(function(err, updatedService){
+               if(err){
+                    return res.status(500).send();
+               }
+
+               if(!updatedService){
+                    return res.status(404).send();
+               }
+
+               return res.send("OK");
+          });
+     });
 });
-
-router.post('/buy', function(req, res){
-
-});
-
 
 module.exports = router;
