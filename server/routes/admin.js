@@ -116,7 +116,7 @@ router.post('/services', function(req, res){
      });
 });
 
-router.delete('/product/:id', function(req, res){
+router.delete('/products/:id', function(req, res){
      var id = req.params.id;
 
      Product.findOneAndRemove({_id : id}, function(err, deletedproduct){
@@ -129,6 +129,22 @@ router.delete('/product/:id', function(req, res){
           }
 
           return res.send("Produto deletado com sucesso");
+     });
+});
+
+router.delete('/services/:id', function(req, res){
+     var id = req.params.id;
+
+     Service.findOneAndRemove({_id : id}, function(err, deletedservice){
+          if(err){
+               return res.status(500).send();
+          }
+
+          if(!deletedservice){
+               return res.status(404).send();
+          }
+
+          return res.send("Servico deletado com sucesso");
      });
 });
 
