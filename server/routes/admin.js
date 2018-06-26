@@ -6,7 +6,7 @@ var User = require('../lib/user');
 
 router.post('/addUser', function(req, res){
      var login = req.body.login;
-     var passWord = req.body.passWord;
+     var password = req.body.password;
      var photo = req.body.photo;
      var name = req.body.name;
      var email = req.body.email;
@@ -16,7 +16,7 @@ router.post('/addUser', function(req, res){
 
      var newadmin = User();
      newadmin.login = login;
-     newadmin.passWord = passWord;
+     newadmin.password = password;
      newadmin.photo = photo;
      newadmin.name = name;
      newadmin.email = email;
@@ -35,7 +35,7 @@ router.post('/addUser', function(req, res){
 
 router.post('/addAdmin', function(req, res){
      var login = req.body.login;
-     var passWord = req.body.passWord;
+     var password = req.body.password;
      var photo = req.body.photo;
      var name = req.body.name;
      var email = req.body.email;
@@ -45,7 +45,7 @@ router.post('/addAdmin', function(req, res){
 
      var newadmin = User();
      newadmin.login = login;
-     newadmin.passWord = passWord;
+     newadmin.password = password;
      newadmin.photo = photo;
      newadmin.name = name;
      newadmin.email = email;

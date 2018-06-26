@@ -9,7 +9,7 @@ router.post('/login', function(req, res){
      var username = req.body.login;
      var password = req.body.password;
 
-     User.findOne({login : username, passWord : password}, function(err, user){
+     User.findOne({login : username, password : password}, function(err, user){
           if(err){
                return res.send("Ocorreu um erro");
           }
@@ -27,7 +27,7 @@ router.post('/loginAdmin', function(req, res){
      var username = req.body.login;
      var password = req.body.password;
 
-     User.findOne({login : username, passWord : password, isAdmin : true}, function(err, user){
+     User.findOne({login : username, password : password, isAdmin : true}, function(err, user){
           if(err){
                return res.send("Ocorreu um erro");
           }

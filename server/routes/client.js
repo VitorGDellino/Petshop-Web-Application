@@ -60,14 +60,14 @@ router.put('/userUpdate/:username', function(req, res){
                return res.send("Usuário nao encontrado");
           }
 
-          if(!req.body.passWord){
+          if(!req.body.password){
                return res.send("Você deve colocar a senha antiga");
           }else{
-               var password = req.body.passWord;
-               if(foundUser.passWord === password){
+               var password = req.body.password;
+               if(foundUser.password === password){
                     if(req.body.newPassWord){
                          if(req.body.newPassWord === req.body.newPassWord2){
-                              foundUser.passWord = req.body.newPassWord;
+                              foundUser.password = req.body.newPassWord;
 
                          }else{
                               return res.send("A novas senhas devem ser iguais");
