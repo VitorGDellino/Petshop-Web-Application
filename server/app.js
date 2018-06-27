@@ -19,7 +19,7 @@ app.use('/client', clientRouter);
 app.use('/admin', adminRouter);
 app.use('/utils', utilsRouter);
 
-// app.get('/utils/users', function (req, res, next) {
+// app.get('/utils/users', function (req, res, next) {   //NAO PRECISA DISSO APARENTEMENTE
   // res.json({msg: 'This is CORS-enabled for all origins!'})
 // })
 
