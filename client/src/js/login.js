@@ -131,18 +131,14 @@ function listProductsToBuy(){
                 text[i] = text[i].substr(1) + "}";
                 list.push(JSON.parse(text[i]));
             }
-            // console.log(list);
+            console.log(list);
             changeHTML(list, list.length, "#buy");
         };
-
         xhr.onerror = function() {
           alert('Woops, there was an error making the request.');
         };
-
         xhr.send(null);
-
     });
-
 }
 
 //Funcao que carrega a pagina de comprar produto
@@ -197,56 +193,59 @@ function insertInCart(product){
 // Funcao que calcula o valor da compra e muda o html para finalizar o pagamento
 function finalizeBuy(){
     $(document).ready( function(){
+
         var valorDaCompra = 0;
         var n = 0;
         var table = [];
         var n2 = 0;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/products", true);
 
-        var request = indexedDB.open("petshop", 3);
-
-        request.onsuccess = function(event){
-            var db = event.target.result;
-            var transaction = db.transaction(["Estoque"], "readwrite");
-            var store = transaction.objectStore("Estoque");
-            var count = store.count();
-            count.onsuccess = function(){
-                n = count.result;
-            };
-            var getAll = store.getAll();
-            getAll.onsuccess = function(e){
-                var result = e.target.result;
-                flag = 0;
-                c_len = cart.length;
-                for(j=0;j<c_len;j++){
-                    for(i=0;i<n;i++){
-                        if(cart[j].name === result[i].name){
-                            if(cart[j].quant > result[i].qtd_estoque){
-                                alert ("Quantidade de item nao disponivel em estoque");
-                                goToBuy();
-                                cart = [];
-                                flag = 1;
-                                break;
-                            }else{
-                                valorDaCompra+=(result[i].preco*cart[j].quant);
-                                table[n2] = result[i];
-                                updateStorage(result[i].id, cart[j].quant);
-                                n2++;
-                            }
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            result = []
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                result.push(JSON.parse(text[i]));
+            }
+            // console.log(list);
+            n = result.length;
+            flag = 0;
+            c_len = cart.length;
+            for(j=0;j<c_len;j++){
+                for(i=0;i<n;i++){
+                    if(cart[j].name === result[i].name){
+                        if(cart[j].quant > result[i].qtd_estoque){
+                            alert ("Quantidade de item nao disponivel em estoque");
+                            goToBuy();
+                            cart = [];
+                            flag = 1;
+                            break;
+                        }else{
+                            valorDaCompra+=(result[i].preco*cart[j].quant);
+                            table[n2] = result[i];
+                            updateStorage(result[i]._id, cart[j].quant);
+                            n2++;
                         }
                     }
                 }
+            }
 
-                if(flag != 1){
-                    //console.log("VALOR DA COMPRA" + valorDaCompra);
-                    changeHTML(table,n2, '#cartList');
-                    changeHTML(0, valorDaCompra, '#finalizeBuy');
-                    valorTotaldaCompra = valorDaCompra;
-                }
+            if(flag != 1){
+                //console.log("VALOR DA COMPRA" + valorDaCompra);
+                changeHTML(table,n2, '#cartList');
+                changeHTML(0, valorDaCompra, '#finalizeBuy');
+                valorTotaldaCompra = valorDaCompra;
+            }
 
-            };
-
-            db.close();
         };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
 
     });
 }
@@ -260,25 +259,40 @@ function goToFinalizeBuy(){
 
 // Funcao que insere a venda realizada no banco de Dados
 function finishingSale() {
-    var request = indexedDB.open("petshop", 3);
-    request.onsuccess = function(event) {
-        var db = event.target.result;
-        var transaction = db.transaction(["Vendas"], "readwrite");
-        var store = transaction.objectStore("Vendas");
-        var itens = "";
-        for (i=0;i<cart.length;i++) {
-            itens += cart[i].name + "," + cart[i].quant + ". ";
-        }
-        //console.log(valorTotaldaCompra);
-        var venda = {
-            user: loggedUser,
-            itens: itens,
-            total: valorTotaldaCompra
-        };
-        var request = store.add(venda);
+    // var request = indexedDB.open("petshop", 3);
+    // request.onsuccess = function(event) {
+    //     var db = event.target.result;
+    //     var transaction = db.transaction(["Vendas"], "readwrite");
+    //     var store = transaction.objectStore("Vendas");
+    //     var itens = "";
+    //     for (i=0;i<cart.length;i++) {
+    //         itens += cart[i].name + "," + cart[i].quant + ". ";
+    //     }
+    //     //console.log(valorTotaldaCompra);
+    //     var venda = {
+    //         user: loggedUser,
+    //         itens: itens,
+    //         total: valorTotaldaCompra
+    //     };
+    //     var request = store.add(venda);
+    //
+    //     db.close();
+    // };
+    // buy
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:3000/utils/buy", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
 
-        db.close();
-    };
+    xhr.onreadystatechange = function() {
+        console.log("DEU CERTO");
+    }
+    var itens = "";
+    for (i=0;i<cart.length;i++) {
+        itens += cart[i].name + "," + cart[i].quant + ". ";
+    }
+    data = JSON.stringify({user: loggedUser, itens: itens, total: valorTotaldaCompra});
+
+    xhr.send(data);
 }
 
 // Funcao que efetiva a compra em si
@@ -296,38 +310,20 @@ function afterBuy() {
 
 // Funcao que atualiza o estoque após uma venda
 function updateStorage(id, quantidadeVendida) {
-    var request = indexedDB.open("petshop", 3);
-    //console.log("id: "+product_id);
 
-    request.onsuccess = function(event){
-        var db = event.target.result;
-        var transaction = db.transaction(["Estoque"], "readwrite");
-        var store = transaction.objectStore("Estoque");
-        var get = store.get(id);
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", "http://localhost:3000/utils/updateStock", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
 
-        get.onsuccess = function(e) {
-            var result = e.target.result;
-            if(typeof result !== "undefined"){
-                var produto = {
-                    id: result.id,
-                    name: result.name,
-                    photo: result.photo,
-                    descricao: result.descricao,
-                    preco: result.preco,
-                    qtd_estoque: result.qtd_estoque - quantidadeVendida,
-                    qtd_vendida: result.qtd_vendida + quantidadeVendida
-                };
+    xhr.onreadystatechange = function() {
+        console.log("DEU CERTO");
+        console.log(id);
+        console.log(quantidadeVendida);
+    }
 
-                var update = store.put(produto);
-                update.onsuccess = function(e) {
-                    //console.log("atualizou o produto");
-                }
-            }
-        };
+    data = JSON.stringify({id: id, qtd: quantidadeVendida});
 
-
-        db.close();
-    };
+    xhr.send(data);
 }
 
 //Funcao que carrega a pagina de editar o proprio usuario
