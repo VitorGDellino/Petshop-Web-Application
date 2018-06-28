@@ -29,7 +29,7 @@ router.post('/addUser', function(req, res){
                return res.status(500).send();
           }
 
-          return res.status(200).send();
+          return res.status(200).send("ok");
      });
 });
 
@@ -58,7 +58,7 @@ router.post('/addAdmin', function(req, res){
                return res.status(500).send();
           }
 
-          return res.status(200).send();
+          return res.status(200).send("ok");
      });
 
 });
@@ -85,7 +85,7 @@ router.post('/products', function(req, res){
                return res.status(500).send();
           }
 
-          return res.status(200).send();
+          return res.status(200).send("ok");
      });
 });
 
@@ -112,7 +112,7 @@ router.post('/services', function(req, res){
                return res.status(500).send();
           }
 
-          return res.status(200).send();
+          return res.status(200).send("ok");
      });
 });
 

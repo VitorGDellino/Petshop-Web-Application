@@ -737,46 +737,71 @@ function deletePet(id){
 //Funcao para carregar os valores nas txtbox da pagina de servicos
 function carregarServico(){
 	$(document).ready( function(){
-        try{
-            var id = $("#ID").val();
-			//Verifica se o id foi prrenchido
-            if(id !== ""){
+        var id = $("#ID").val();
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/products/"+id, true);
 
-				var request = indexedDB.open("petshop", 3);
-
-				//Abre o bd e a tabela de servicos
-				request.onsuccess = function(event){
-					var db = event.target.result;
-					var transaction = db.transaction(["Servicos"], "readwrite");
-					var store = transaction.objectStore("Servicos");
-					var request = store.get(Number(id));
-
-					request.onsuccess = function(e){
-
-						//Verifica se o id existe
-						var result = e.target.result;
-						if(typeof result !== "undefined"){
-							//Poe os valores nas txtbox
-							document.getElementById("productName").value = request.result.name;
-							document.getElementById("photo").src = request.result.photo;
-							document.getElementById("descricao").value = request.result.descricao;
-							document.getElementById("price").value = request.result.preco;
-							document.getElementById("hour").value = request.result.hora;
-							document.getElementById("date").value = request.result.date;
-							// console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
-						}else{
-							alert("O ID não existe");
-						}
-					};
-
-					db.close();
-				}
-            }else{
-                alert("É necessário preencher o ID!");
+        xhr.onload = function() {
+            var text = xhr.responseText;
+          // console.log(JSON.parse(text).length);
+            // console.log(text);
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = []
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                list.push(JSON.parse(text[i]));
             }
-        }catch(err){
-			console.log(err.message);
-        }
+            console.log(list);
+            changeHTML(list, list.length, "#buy");
+        };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
+		
+		
+		// try{
+            // var id = $("#ID").val();
+			// //Verifica se o id foi prrenchido
+            // if(id !== ""){
+
+				// var request = indexedDB.open("petshop", 3);
+
+				// //Abre o bd e a tabela de servicos
+				// request.onsuccess = function(event){
+					// var db = event.target.result;
+					// var transaction = db.transaction(["Servicos"], "readwrite");
+					// var store = transaction.objectStore("Servicos");
+					// var request = store.get(Number(id));
+
+					// request.onsuccess = function(e){
+
+						// //Verifica se o id existe
+						// var result = e.target.result;
+						// if(typeof result !== "undefined"){
+							// //Poe os valores nas txtbox
+							// document.getElementById("productName").value = request.result.name;
+							// document.getElementById("photo").src = request.result.photo;
+							// document.getElementById("descricao").value = request.result.descricao;
+							// document.getElementById("price").value = request.result.preco;
+							// document.getElementById("hour").value = request.result.hora;
+							// document.getElementById("date").value = request.result.date;
+							// // console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
+						// }else{
+							// alert("O ID não existe");
+						// }
+					// };
+
+					// db.close();
+				// }
+            // }else{
+                // alert("É necessário preencher o ID!");
+            // }
+        // }catch(err){
+			// console.log(err.message);
+        // }
     });
 }
 
@@ -1328,52 +1353,57 @@ function listServices(){
 
 //Funcao para registrar os administradores
 function registerAdmin(){
-    $(document).ready( function(){
-        try{
-            var name = $("#name").val();
+	$(document).ready( function(){	
+		try{
+	
+			var name = $("#name").val();
             var login = $("#login").val();
             var photo = $("#photo").attr('src');
-            var passWord = $("#passWord").val();
-            var passWord2 = $("#passWord2").val();
+            var password = $("#passWord").val();
+            var password2 = $("#passWord2").val();
             var address = $("#address").val();
             var tel = $("#tel").val();
             var email = $("#email").val();
-
+			
+			// console.log(name);
+			// console.log(login);
+			// console.log(photo);
+			// console.log(passWord);
+			
 			//Verifica se o q foi colocado nas txtbox n esta vazio
-            if(name !== "" && login !== "" && passWord !== "" && passWord2 !== "" && address !== "" && tel !== "" && email !== ""){
-                if(passWord === passWord2){
+            if(name !== "" && login !== "" && password !== "" && password2 !== "" && address !== "" && tel !== "" && email !== ""){
+                if(password === password2){
 
-					var request = indexedDB.open("petshop", 3);
-
-					request.onsuccess = function(event){
-						var db = event.target.result;
-
-						var transaction = db.transaction(["Usuarios"], "readwrite");
-
-						var store = transaction.objectStore("Usuarios");
-
-						//Adiciona um novo cadastro no banco de dados na tabela usuarios
-						var user = {
-							name: name,
-							login: login,
-                            photo: photo,
-							passWord: passWord,
-							address: address,
-							tel: tel,
-							email: email,
-							isAdmin: true
-						};
-
-						var add = store.add(user);
-
-						add.onsuccess = function(e){
-							//console.log("cadastrou bunito");
-                            alert("Cadastro realizado com sucesso");
-                            goToAdminRegister();
+					var xhr = new XMLHttpRequest();
+		
+					xhr.open("POST", "http://localhost:3000/admin/addAdmin", true);
+					
+					xhr.setRequestHeader("Content-Type", "application/json");
+					
+					xhr.onreadystatechange = function(){
+						if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+							var text = xhr.responseText;
+							if(text==="ok"){
+								alert("Cadastro realizado com sucesso");
+								goToAdminRegister();
+							}else{
+								alert("Erro ao cadastrar");
+							}
+							console.log(text);
 						}
-
-						db.close()
 					};
+					
+					data = JSON.stringify({login : login,
+						password : password,
+						photo : '',
+						name : name,
+						email : email,
+						tel : tel,
+						address : address,
+					});
+					console.log(data);
+					xhr.send(data);
+				
                 }else{
                     alert("Senhas diferem");
                 }
@@ -1389,51 +1419,58 @@ function registerAdmin(){
 //Funcao para registrar os clientes
 //Funciona do mesmo jeito que registerAdmin()
 function registerClient(){
-    $(document).ready( function(){
-        try{
-            var name = $("#name").val();
+    
+	$(document).ready( function(){	
+		try{
+	
+			var name = $("#name").val();
             var login = $("#login").val();
             var photo = $("#photo").attr('src');
-            var passWord = $("#passWord").val();
-            var passWord2 = $("#passWord2").val();
+            var password = $("#passWord").val();
+            var password2 = $("#passWord2").val();
             var address = $("#address").val();
             var tel = $("#tel").val();
             var email = $("#email").val();
+			
+			// console.log(name);
+			// console.log(login);
+			// console.log(photo);
+			// console.log(passWord);
+			
+			//Verifica se o q foi colocado nas txtbox n esta vazio
+            if(name !== "" && login !== "" && password !== "" && password2 !== "" && address !== "" && tel !== "" && email !== ""){
+                if(password === password2){
 
-            if(name !== "" && login !== "" && passWord !== "" && passWord2 !== "" && address !== "" && tel !== "" && email !== ""){
-                if(passWord === passWord2){
-
-					var request = indexedDB.open("petshop", 3);
-
-					request.onsuccess = function(event){
-						var db = event.target.result;
-
-						var transaction = db.transaction(["Usuarios"], "readwrite");
-
-						var store = transaction.objectStore("Usuarios");
-
-						var user = {
-							name: name,
-							login: login,
-                            photo: photo,
-							passWord: passWord,
-							address: address,
-							tel: tel,
-							email: email,
-							isAdmin: false
-						};
-
-						var add = store.add(user);
-
-						add.onsuccess = function(e){
-							//console.log("cadastrou bunito");
-                            alert("Cadastro efetuado com sucesso");
-                            goToClientRegister();
-						};
-
-
-						db.close()
+					var xhr = new XMLHttpRequest();
+		
+					xhr.open("POST", "http://localhost:3000/admin/addUser", true);
+					
+					xhr.setRequestHeader("Content-Type", "application/json");
+					
+					xhr.onreadystatechange = function(){
+						if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+							var text = xhr.responseText;
+							if(text==="ok"){
+								alert("Cadastro efetuado com sucesso");
+								goToClientRegister();
+							}else{
+								alert("Erro ao cadastrar");
+							}
+							console.log(text);
+						}
 					};
+					
+					data = JSON.stringify({login : login,
+						password : password,
+						photo : '',
+						name : name,
+						email : email,
+						tel : tel,
+						address : address,
+					});
+					console.log(data);
+					xhr.send(data);
+				
                 }else{
                     alert("Senhas diferem");
                 }
@@ -1444,51 +1481,54 @@ function registerClient(){
 			console.log(err.message);
         }
     });
+	
 }
 
 //Funcao para registrar os produtos
 //Funciona do mesmo jeito que registerAdmin()
 function registerProduct(){
-    $(document).ready( function(){
-        try{
-            var name = $("#productName").val();
+	$(document).ready( function(){	
+		try{
+	
+			var name = $("#productName").val();
             var descricao = $("#descricao").val();
             var photo = $("#photo").attr('src');
             var price = $("#price").val();
             var stock = $("#stock").val();
             var sold = $("#sold").val();
-
+			
+			//Verifica se o q foi colocado nas txtbox n esta vazio
             if(name !== "" && descricao !== "" && price !== "" && stock !== "" && sold !== ""){
-
-				var request = indexedDB.open("petshop", 3);
-
-				request.onsuccess = function(event){
-					var db = event.target.result;
-
-					var transaction = db.transaction(["Estoque"], "readwrite");
-
-					var store = transaction.objectStore("Estoque");
-
-					var product = {
-						name: name,
-						descricao: descricao,
-                        photo: photo,
-						preco: Number(price),
-						qtd_estoque: Number(stock),
-						qtd_vendida: Number(sold),
-					};
-
-					var add = store.add(product);
-
-					add.onsuccess = function(e){
-						//console.log("cadastrou bunito");
-					};
-
-
-					db.close()
+	
+				var xhr = new XMLHttpRequest();
+	
+				xhr.open("POST", "http://localhost:3000/admin/products", true);
+				
+				xhr.setRequestHeader("Content-Type", "application/json");
+				
+				xhr.onreadystatechange = function(){
+					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+						var text = xhr.responseText;
+						if(text==="ok"){
+							alert("Cadastro efetuado com sucesso");
+							goToStockManager();
+						}else{
+							alert("Erro no cadastro");
+						}
+						console.log(text);
+					}
 				};
-				goToStockManager();
-
+				
+				data = JSON.stringify({name : name,
+					 photo : '',
+					 descricao : descricao,
+					 preco : price,
+					 qtd_estoque : stock,
+					 qtd_vendida : sold,
+				});
+				console.log(data);
+				xhr.send(data);
+			
             }else{
                 alert("É necessário preencher todos os campos!");
             }
@@ -1501,46 +1541,49 @@ function registerProduct(){
 //Funcao para registrar os servicos
 //Funciona do mesmo jeito que registerAdmin()
 function registerService(){
-    $(document).ready( function(){
-        try{
-            var name = $("#productName").val();
+    $(document).ready( function(){	
+		try{
+	
+			var name = $("#productName").val();
             var descricao = $("#descricao").val();
             var photo = $("#photo").attr('src');
             var price = $("#price").val();
             var hour = $("#hour").val();
             var date = $("#date").val();
-
+			
+			//Verifica se o q foi colocado nas txtbox n esta vazio
             if(name !== "" && descricao !== "" && price !== "" && hour !== "" && date !== ""){
-
-				var request = indexedDB.open("petshop", 3);
-
-				request.onsuccess = function(event){
-					var db = event.target.result;
-
-					var transaction = db.transaction(["Servicos"], "readwrite");
-
-					var store = transaction.objectStore("Servicos");
-
-					var service = {
-						name: name,
-                        photo: photo,
-						descricao: descricao,
-						preco: Number(price),
-						hora: hour,
-						date: date,
-						reserva: "none"
-					};
-
-					var add = store.add(service);
-
-					add.onsuccess = function(e){
-						//console.log("cadastrou bunito");
-					};
-
-					db.close()
+				
+				var xhr = new XMLHttpRequest();
+	
+				xhr.open("POST", "http://localhost:3000/admin/services", true);
+				
+				xhr.setRequestHeader("Content-Type", "application/json");
+				
+				xhr.onreadystatechange = function(){
+					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+						var text = xhr.responseText;
+						if(text==="ok"){
+							alert("Cadastro efetuado com sucesso");
+							goToServiceManager();
+						}else{
+							alert("Erro no cadastro");
+						}
+						console.log(text);
+					}
 				};
-
-                goToServiceManager();
+				
+				data = JSON.stringify({name : name,
+					 photo : '',
+					 descricao : descricao,
+					 preco : price,
+					 hora : hour,
+					 date : date,
+					 reserva : ''
+				});
+				console.log(data);
+				xhr.send(data);
+			
             }else{
                 alert("É necessário preencher todos os campos!");
             }
@@ -1606,7 +1649,7 @@ function adminLogin(){
 		
 		var xhr = new XMLHttpRequest();
 	
-		xhr.open("POST", "http://localhost:3000/utils/login", true);
+		xhr.open("POST", "http://localhost:3000/utils/loginAdmin", true);
 		
 		xhr.setRequestHeader("Content-Type", "application/json");
 		
