@@ -115,39 +115,32 @@ function goToStockManager(){
 // Funcao que lista os produtos disponiveis para comprar
 function listProductsToBuy(){
     $(document).ready( function(){
-        try{
 
-            var n = 0;
-            var table;
-            var request = indexedDB.open("petshop", 3);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/products", true);
 
-			//Abre o banco de dados e abre a tabela de animais
-            request.onsuccess = function(event){
-                var db = event.target.result;
+        xhr.onload = function() {
+            var text = xhr.responseText;
+          // console.log(JSON.parse(text).length);
+            // console.log(text);
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = []
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                list.push(JSON.parse(text[i]));
+            }
+            // console.log(list);
+            changeHTML(list, list.length, "#buy");
+        };
 
-                var transaction = db.transaction(["Estoque"], "readwrite");
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
 
-                var store = transaction.objectStore("Estoque");
+        xhr.send(null);
 
-                var count = store.count();
-
-                count.onsuccess = function(){
-                    n = count.result;
-                };
-
-                var getAll = store.getAll();
-
-                getAll.onsuccess = function(e){
-                    table = e.target.result;
-                    changeHTML(table, n, "#buy");
-                };
-
-                db.close();
-            };
-
-        }catch(err){
-            console.log(err.message);
-        }
     });
 
 }
