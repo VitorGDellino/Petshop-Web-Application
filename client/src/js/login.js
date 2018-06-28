@@ -259,26 +259,7 @@ function goToFinalizeBuy(){
 
 // Funcao que insere a venda realizada no banco de Dados
 function finishingSale() {
-    // var request = indexedDB.open("petshop", 3);
-    // request.onsuccess = function(event) {
-    //     var db = event.target.result;
-    //     var transaction = db.transaction(["Vendas"], "readwrite");
-    //     var store = transaction.objectStore("Vendas");
-    //     var itens = "";
-    //     for (i=0;i<cart.length;i++) {
-    //         itens += cart[i].name + "," + cart[i].quant + ". ";
-    //     }
-    //     //console.log(valorTotaldaCompra);
-    //     var venda = {
-    //         user: loggedUser,
-    //         itens: itens,
-    //         total: valorTotaldaCompra
-    //     };
-    //     var request = store.add(venda);
-    //
-    //     db.close();
-    // };
-    // buy
+
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "http://localhost:3000/utils/buy", true);
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -450,45 +431,22 @@ function readURL(input) {
 //Funcao para registrar os animais
 function registerPet(){
     $(document).ready( function(){
-        ////console.log("entrou pet");
-        try {
-            var petName = $("#petName").val();
-            var race = $("#race").val();
-            var petPhoto = $("#photo").attr('src');
-            var age = $("#age").val();
+        var petName = $("#petName").val();
+        var race = $("#race").val();
+        var petPhoto = $("#photo").attr('src');
+        var age = $("#age").val();
 
-			//Pega os valoresde cada txtbox do html e verifica se foram preenchidas
-            if (petName !== "" && race !== "" && age !== "") {
-                var request = indexedDB.open("petshop", 3);
-                request.onsuccess = function(e) {
-					//Adiciona os valores no banco de dados na tabela de animais
-                    var db = e.target.result;
-                    var transaction = db.transaction(["Animais"], "readwrite");
-                    var store = transaction.objectStore("Animais");
-                    var pet = {
-                        login: loggedUser,
-                        petPhoto: petPhoto,
-                        petName: petName,
-                        race: race,
-                        age: age
-                    };
-                    var add = store.add(pet);
-                    add.onsuccess = function(e){
-                        //console.log("cadastrou bunito");
-                    }
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:3000/client/addPet", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
 
-                    db.close();
-
-                    goToRegisterOrListPet();
-                }
-            }
-        } catch(err) {
-            console.log(err.message);
+        xhr.onreadystatechange = function() {
+            console.log(data);
         }
 
-        //console.log(petName);
-        //console.log(race);
-        //console.log(age);
+        data = JSON.stringify({login: loggedUser, petName: petName, petPhoto: petPhoto, race: race, age: age});
+
+        xhr.send(data);
     });
 }
 
@@ -559,6 +517,7 @@ function editPet(){
 //Funcao para editar o proprio usuario
 function editProfile(){
     $(document).ready(function(){
+
         var newName = $("#newName").val();
         var newPhoto = $("#photo").attr('src');
         var newLogin = $("#newLogin").val();
@@ -569,92 +528,24 @@ function editProfile(){
         var newTel = $("#newTel").val();
         var newEmail = $("#newEmail").val();
         var isAdmin = false;
-        var empty_password = 0;
 
-        var request = indexedDB.open("petshop", 3);
-		//Pega os valores das caixas
-        request.onsuccess = function(event){
-            var db = event.target.result;
+        if ((newPassWord != newPassWord2) && (newPassWord == "")) {
+            alet("As senhas devem ser iguais!");
+        } else {
 
-            var transaction = db.transaction(["Usuarios"], "readwrite");
+            var xhr = new XMLHttpRequest();
+            xhr.open("PUT", "http://localhost:3000/client/userUpdate/"+loggedUser, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
 
-            var store = transaction.objectStore("Usuarios");
+            xhr.onreadystatechange = function() {
+                console.log("DEU CERTO");
+            }
 
-            var get = store.get(loggedUser);
+            data = JSON.stringify({name: newName, photo: newPhoto, password: oldPassWord, newPassWord: newPassWord, newPassWord2: newPassWord2, address: newAdress, tel: newTel, email: newEmail});
 
+            xhr.send(data);
 
-            get.onsuccess = function(e){
-                var result = e.target.result;
-
-				//Verifica se o id eh valido
-                if(typeof result !== "undefined"){
-                    if(newName === ""){
-                        newName = result.name;
-                    }
-
-                    if(newPhoto === "/assets/pic.jpg"){
-                        newPhoto = result.photo;
-                    }
-
-                    if(newPassWord === "" && newPassWord2 === ""){
-                        newPassWord = result.passWord;
-                        newPassWord2 = result.passWord;
-                        empty_password = 1;
-                    }
-
-                    if(newAdress === ""){
-                        newAdress = result.address;
-                    }
-
-                    if(newTel === ""){
-                        newTel = result.tel;
-                    }
-
-                    if(newEmail === ""){
-                        newEmail = result.email;
-                    }
-
-                    isAdmin = result.isAdmin;
-                }
-
-
-				//Prepara o novo usuario para ser atualizado no banco de dados
-                var user = {
-                    name: newName,
-                    photo: newPhoto,
-                    login: loggedUser,
-                    passWord: newPassWord,
-                    address: newAdress,
-                    tel: newTel,
-                    email: newEmail,
-                    isAdmin: isAdmin
-                };
-
-                //console.log(newPhoto);
-				//Verifica se as senhas inseridas sao iguais
-                if(newPassWord === newPassWord2){
-                    if(newPassWord === oldPassWord && newPassWord !== "" && empty_password == 0){
-                        alert("A senha deve ser distinta da anterior");
-                    }else{
-						//Atualiza no banco de dados
-                        var update = store.put(user);
-
-                        update.onsuccess = function(){
-                            //console.log("alterou bunito");
-                            $("#userPhoto").attr('src', user.photo);
-                        }
-
-                        alert("Alteracao realizada com sucesso");
-                    }
-                }else{
-                    alert("Novas senhas diferem");
-                }
-            };
-
-            db.close();
-        };
-
-
+        }
     });
 }
 
@@ -714,22 +605,34 @@ function adminNavBar(){
 function deletePet(id){
     $(document).ready( function(){
         if(confirm("Deseja mesmo deletar esse Animal?")){
-            var request = indexedDB.open("petshop", 3);
+            // var request = indexedDB.open("petshop", 3);
+            //
+            // request.onsuccess = function(event){
+            //     //Abre o banco de dados e deleta o id selecionado
+			// 	var db = event.target.result
+            //
+            //     var transaction = db.transaction(["Animais"], "readwrite");
+            //
+            //     var store = transaction.objectStore("Animais");
+            //
+            //     var del = store.delete(id);
+            //
+            //     db.close();
+            //
+            //     goToRegisterOrListPet();
+            // };
 
-            request.onsuccess = function(event){
-                //Abre o banco de dados e deleta o id selecionado
-				var db = event.target.result
+            console.log(id);
 
-                var transaction = db.transaction(["Animais"], "readwrite");
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", "http://localhost:3000/client/pets/"+id, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
 
-                var store = transaction.objectStore("Animais");
+            xhr.onreadystatechange = function() {
+                console.log("DEU CERTO");
+            }
 
-                var del = store.delete(id);
-
-                db.close();
-
-                goToRegisterOrListPet();
-            };
+            xhr.send(null);
         }
     });
 }
@@ -760,8 +663,8 @@ function carregarServico(){
           alert('Woops, there was an error making the request.');
         };
         xhr.send(null);
-		
-		
+
+
 		// try{
             // var id = $("#ID").val();
 			// //Verifica se o id foi prrenchido
@@ -1086,7 +989,7 @@ function changeHTML(table, n, id){
         var eachline="";
         for(i=0; i<n; i++){
             //console.log(n);
-            eachline += '<li><img src='+ table[i].petPhoto+ ' alt="Someone" style="width:130px; height:130px;"><br>Nome: ' + table[i].petName + "<br>Raça: " + table[i].race + "<br>Idade: " + table[i].age + "<br>" + '<a><button class="btn" type="button" onClick="goToEditPet('+table[i].id+');">Atualizar</button></a><button class="btn" type="button" onclick="deletePet('+table[i].id+')">Deletar</button><br></li>';
+            eachline += '<li><img src='+ table[i].petPhoto+ ' alt="Someone" style="width:130px; height:130px;"><br>Nome: ' + table[i].petName + "<br>Raça: " + table[i].race + "<br>Idade: " + table[i].age + "<br>" + '<a><button class="btn" type="button" onClick="goToEditPet('+table[i]._id+');">Atualizar</button></a><button class="btn" type="button" onclick="deletePet('+table[i].id+')">Deletar</button><br></li>';
         }
     }
     //console.log(id);
@@ -1224,51 +1127,31 @@ function listScheduleService(){
 //Funcao para listar os animais
 function listPets(){
     $(document).ready( function(){
-        try{
 
-            var n = 0;
-            var table;
-            var request = indexedDB.open("petshop", 3);
-
-			//Abre o banco de dados e abre a tabela de animais
-            request.onsuccess = function(event){
-                var db = event.target.result;
-
-                var transaction = db.transaction(["Animais"], "readwrite");
-
-                var store = transaction.objectStore("Animais");
-
-                var count = store.count();
-
-                count.onsuccess = function(){
-                    n = count.result;
-                };
-
-                var getAll = store.getAll();
-
-                getAll.onsuccess = function(e){
-                    table = e.target.result;
-                    var table2 = [];
-                    var n2 = 0;
-
-					//Usa a funcao changeHTML para mudar o HTML da pagina de acordo com o que tem no banco de dados
-                    for (i=0;i<n;i++){
-                        if(table[i].login === loggedUser){
-                            table2[n2] = table[i];
-                            n2++;
-                        }
-                    }
-                    changeHTML(table2, n2, "#pets");
-                };
-
-                db.close();
-            };
-
-        }catch(err){
-            console.log(err.message);
-        }
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/client/pets/"+loggedUser, true);
+        xhr.onload = function() {
+            var text = xhr.responseText;
+          // console.log(JSON.parse(text).length);
+            // console.log(text);
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = []
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                list.push(JSON.parse(text[i]));
+            }
+            console.log(list);
+            changeHTML(list, list.length, "#pets");
+        };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
     });
 }
+
 
 //Funcao para listar os produtos
 //Funciona do mesmo jeito q a listPets()
@@ -1353,9 +1236,9 @@ function listServices(){
 
 //Funcao para registrar os administradores
 function registerAdmin(){
-	$(document).ready( function(){	
+	$(document).ready( function(){
 		try{
-	
+
 			var name = $("#name").val();
             var login = $("#login").val();
             var photo = $("#photo").attr('src');
@@ -1364,22 +1247,22 @@ function registerAdmin(){
             var address = $("#address").val();
             var tel = $("#tel").val();
             var email = $("#email").val();
-			
+
 			// console.log(name);
 			// console.log(login);
 			// console.log(photo);
 			// console.log(passWord);
-			
+
 			//Verifica se o q foi colocado nas txtbox n esta vazio
             if(name !== "" && login !== "" && password !== "" && password2 !== "" && address !== "" && tel !== "" && email !== ""){
                 if(password === password2){
 
 					var xhr = new XMLHttpRequest();
-		
+
 					xhr.open("POST", "http://localhost:3000/admin/addAdmin", true);
-					
+
 					xhr.setRequestHeader("Content-Type", "application/json");
-					
+
 					xhr.onreadystatechange = function(){
 						if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 							var text = xhr.responseText;
@@ -1392,7 +1275,7 @@ function registerAdmin(){
 							console.log(text);
 						}
 					};
-					
+
 					data = JSON.stringify({login : login,
 						password : password,
 						photo : '',
@@ -1403,7 +1286,7 @@ function registerAdmin(){
 					});
 					console.log(data);
 					xhr.send(data);
-				
+
                 }else{
                     alert("Senhas diferem");
                 }
@@ -1419,10 +1302,10 @@ function registerAdmin(){
 //Funcao para registrar os clientes
 //Funciona do mesmo jeito que registerAdmin()
 function registerClient(){
-    
-	$(document).ready( function(){	
+
+	$(document).ready( function(){
 		try{
-	
+
 			var name = $("#name").val();
             var login = $("#login").val();
             var photo = $("#photo").attr('src');
@@ -1431,22 +1314,22 @@ function registerClient(){
             var address = $("#address").val();
             var tel = $("#tel").val();
             var email = $("#email").val();
-			
+
 			// console.log(name);
 			// console.log(login);
 			// console.log(photo);
 			// console.log(passWord);
-			
+
 			//Verifica se o q foi colocado nas txtbox n esta vazio
             if(name !== "" && login !== "" && password !== "" && password2 !== "" && address !== "" && tel !== "" && email !== ""){
                 if(password === password2){
 
 					var xhr = new XMLHttpRequest();
-		
+
 					xhr.open("POST", "http://localhost:3000/admin/addUser", true);
-					
+
 					xhr.setRequestHeader("Content-Type", "application/json");
-					
+
 					xhr.onreadystatechange = function(){
 						if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 							var text = xhr.responseText;
@@ -1459,7 +1342,7 @@ function registerClient(){
 							console.log(text);
 						}
 					};
-					
+
 					data = JSON.stringify({login : login,
 						password : password,
 						photo : '',
@@ -1470,7 +1353,7 @@ function registerClient(){
 					});
 					console.log(data);
 					xhr.send(data);
-				
+
                 }else{
                     alert("Senhas diferem");
                 }
@@ -1481,31 +1364,31 @@ function registerClient(){
 			console.log(err.message);
         }
     });
-	
+
 }
 
 //Funcao para registrar os produtos
 //Funciona do mesmo jeito que registerAdmin()
 function registerProduct(){
-	$(document).ready( function(){	
+	$(document).ready( function(){
 		try{
-	
+
 			var name = $("#productName").val();
             var descricao = $("#descricao").val();
             var photo = $("#photo").attr('src');
             var price = $("#price").val();
             var stock = $("#stock").val();
             var sold = $("#sold").val();
-			
+
 			//Verifica se o q foi colocado nas txtbox n esta vazio
             if(name !== "" && descricao !== "" && price !== "" && stock !== "" && sold !== ""){
-	
+
 				var xhr = new XMLHttpRequest();
-	
+
 				xhr.open("POST", "http://localhost:3000/admin/products", true);
-				
+
 				xhr.setRequestHeader("Content-Type", "application/json");
-				
+
 				xhr.onreadystatechange = function(){
 					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 						var text = xhr.responseText;
@@ -1518,7 +1401,7 @@ function registerProduct(){
 						console.log(text);
 					}
 				};
-				
+
 				data = JSON.stringify({name : name,
 					 photo : '',
 					 descricao : descricao,
@@ -1528,7 +1411,7 @@ function registerProduct(){
 				});
 				console.log(data);
 				xhr.send(data);
-			
+
             }else{
                 alert("É necessário preencher todos os campos!");
             }
@@ -1541,25 +1424,25 @@ function registerProduct(){
 //Funcao para registrar os servicos
 //Funciona do mesmo jeito que registerAdmin()
 function registerService(){
-    $(document).ready( function(){	
+    $(document).ready( function(){
 		try{
-	
+
 			var name = $("#productName").val();
             var descricao = $("#descricao").val();
             var photo = $("#photo").attr('src');
             var price = $("#price").val();
             var hour = $("#hour").val();
             var date = $("#date").val();
-			
+
 			//Verifica se o q foi colocado nas txtbox n esta vazio
             if(name !== "" && descricao !== "" && price !== "" && hour !== "" && date !== ""){
-				
+
 				var xhr = new XMLHttpRequest();
-	
+
 				xhr.open("POST", "http://localhost:3000/admin/services", true);
-				
+
 				xhr.setRequestHeader("Content-Type", "application/json");
-				
+
 				xhr.onreadystatechange = function(){
 					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 						var text = xhr.responseText;
@@ -1572,7 +1455,7 @@ function registerService(){
 						console.log(text);
 					}
 				};
-				
+
 				data = JSON.stringify({name : name,
 					 photo : '',
 					 descricao : descricao,
@@ -1583,7 +1466,7 @@ function registerService(){
 				});
 				console.log(data);
 				xhr.send(data);
-			
+
             }else{
                 alert("É necessário preencher todos os campos!");
             }
@@ -1594,7 +1477,7 @@ function registerService(){
 }
 
 //Funcao para fazer o login de usuario
-function userLogin(){	
+function userLogin(){
 	try{
         var userName = document.getElementById("login").elements.namedItem("userName").value;
         var passWord = document.getElementById("login").elements.namedItem("passWord").value;
@@ -1603,13 +1486,13 @@ function userLogin(){
         //console.log(userName);
         //console.log(passWord);
 		//Pega os valores das txtbox do html
-		
+
 		var xhr = new XMLHttpRequest();
-	
+
 		xhr.open("POST", "http://localhost:3000/utils/login", true);
-		
+
 		xhr.setRequestHeader("Content-Type", "application/json");
-		
+
 		xhr.onreadystatechange = function(){
 			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 				var text = xhr.responseText;
@@ -1622,7 +1505,7 @@ function userLogin(){
 				console.log(text);
 			}
 		};
-		
+
 		data = JSON.stringify({login: userName,password: passWord});
 		//console.log(data);
 
@@ -1637,7 +1520,7 @@ function userLogin(){
 //Funciona da mesma maneira que o userLogin()
 //Faz uma checagem para ver se o usuario tem acesso de administrador
 function adminLogin(){
-    
+
 	try{
         var userName = document.getElementById("login").elements.namedItem("userName").value;
         var passWord = document.getElementById("login").elements.namedItem("passWord").value;
@@ -1646,13 +1529,13 @@ function adminLogin(){
         //console.log(userName);
         //console.log(passWord);
 		//Pega os valores das txtbox do html
-		
+
 		var xhr = new XMLHttpRequest();
-	
+
 		xhr.open("POST", "http://localhost:3000/utils/loginAdmin", true);
-		
+
 		xhr.setRequestHeader("Content-Type", "application/json");
-		
+
 		xhr.onreadystatechange = function(){
 			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 				var text = xhr.responseText;
@@ -1665,7 +1548,7 @@ function adminLogin(){
 				console.log(text);
 			}
 		};
-		
+
 		data = JSON.stringify({login: userName,password: passWord});
 		//console.log(data);
 
