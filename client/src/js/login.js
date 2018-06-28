@@ -1551,8 +1551,8 @@ function registerService(){
 }
 
 //Funcao para fazer o login de usuario
-function userLogin(){
-    try{
+function userLogin(){	
+	try{
         var userName = document.getElementById("login").elements.namedItem("userName").value;
         var passWord = document.getElementById("login").elements.namedItem("passWord").value;
         loggedUser = userName;
@@ -1560,35 +1560,30 @@ function userLogin(){
         //console.log(userName);
         //console.log(passWord);
 		//Pega os valores das txtbox do html
-        var request = indexedDB.open("petshop", 3);
+		
+		var xhr = new XMLHttpRequest();
+	
+		xhr.open("POST", "http://localhost:3000/utils/login", true);
+		
+		xhr.setRequestHeader("Content-Type", "application/json");
+		
+		xhr.onreadystatechange = function(){
+			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+				var text = xhr.responseText;
+				if(text==="ok"){
+					userNavBar();
+					userCard(userName, null);
+				}else{
+					alert("Usuario e senha inválidas");
+				}
+				console.log(text);
+			}
+		};
+		
+		data = JSON.stringify({login: userName,password: passWord});
+		//console.log(data);
 
-        request.onsuccess = function(event){
-            request = event.target.result;
-
-            var transaction = request.transaction(["Usuarios"], "readonly");
-            var store = transaction.objectStore("Usuarios");
-
-            var get = store.get(userName);
-
-			//Verifica se o usuario e senha batem com o que tem no banco de dados
-            get.onsuccess = function(e){
-                var result = e.target.result;
-
-                if(typeof result !== "undefined"){
-                    if(result.login === userName && result.passWord === passWord){
-                        userNavBar();
-                        userCard(userName, result.photo);
-                    }else{
-                        alert("Senha inválida");
-                    }
-                }else{
-                    alert("Usuário inválido!");
-                }
-
-            };
-
-            request.close();
-        };
+		xhr.send(data);
 
     }catch(err){
         console.log(err.message);
@@ -1599,49 +1594,44 @@ function userLogin(){
 //Funciona da mesma maneira que o userLogin()
 //Faz uma checagem para ver se o usuario tem acesso de administrador
 function adminLogin(){
-    try{
+    
+	try{
         var userName = document.getElementById("login").elements.namedItem("userName").value;
         var passWord = document.getElementById("login").elements.namedItem("passWord").value;
+        loggedUser = userName;
 
         //console.log(userName);
         //console.log(passWord);
+		//Pega os valores das txtbox do html
+		
+		var xhr = new XMLHttpRequest();
+	
+		xhr.open("POST", "http://localhost:3000/utils/login", true);
+		
+		xhr.setRequestHeader("Content-Type", "application/json");
+		
+		xhr.onreadystatechange = function(){
+			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+				var text = xhr.responseText;
+				if(text==="ok"){
+					adminNavBar();
+					adminCard(userName, null);
+				}else{
+					alert("Usuario e senha inválidas");
+				}
+				console.log(text);
+			}
+		};
+		
+		data = JSON.stringify({login: userName,password: passWord});
+		//console.log(data);
 
-        var request = indexedDB.open("petshop", 3);
-
-        request.onsuccess = function(event){
-            request = event.target.result;
-
-            var transaction = request.transaction(["Usuarios"], "readonly");
-            var store = transaction.objectStore("Usuarios");
-
-            var get = store.get(userName);
-
-            get.onsuccess = function(e){
-                var result = e.target.result;
-
-                if(typeof result !== "undefined"){
-                    if(result.login === userName && result.passWord === passWord && result.isAdmin){
-                        adminNavBar();
-                        adminCard(userName, result.photo);
-                        //console.log("WELCOME LORD");
-                    }else{
-                        alert("VOCE NÃO É UM ADMIN!!");
-                    }
-                }else{
-                    alert("Usuário inválido!");
-                }
-
-            };
-
-            request.close();
-        };
+		xhr.send(data);
 
     }catch(err){
         console.log(err.message);
-
     }
 }
-
 //Funcao para deslogar do site
 function logout(){
     try{

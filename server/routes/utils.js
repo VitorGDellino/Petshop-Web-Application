@@ -8,17 +8,20 @@ var Sale = require('../lib/sale');
 router.post('/login', function(req, res){
      var username = req.body.login;
      var password = req.body.password;
-
+	 
+	 console.log(username);
+	 console.log(password);
+	 
      User.findOne({login : username, password : password}, function(err, user){
           if(err){
-               return res.send("Ocorreu um erro");
+               return res.status(200).send("Ocorreu um erro");
           }
 
           if(!user){
-               return res.send("Usuário e Senha inválidos");
+               return res.status(200).send("Usuário e Senha inválidos");
           }
 
-          return res.send("Seja bem vindo");
+          return res.status(200).send("ok");
      });
      //Checando no BD
 });
@@ -29,14 +32,14 @@ router.post('/loginAdmin', function(req, res){
 
      User.findOne({login : username, password : password, isAdmin : true}, function(err, user){
           if(err){
-               return res.send("Ocorreu um erro");
+               return res.status(200).send("Ocorreu um erro");
           }
 
           if(!user){
-               return res.send("Usuário e Senha inválidos");
+               return res.status(200).send("Usuário e Senha inválidos");
           }
 
-          return res.send("Seja bem vindo administrador");
+          return res.status(200).send("ok");
      });
      //Checando no BD
 });
