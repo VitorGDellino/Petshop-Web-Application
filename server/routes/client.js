@@ -21,7 +21,7 @@ router.get('/pets/:username', function(req, res){
      })
 });
 
-router.get('/services/:username', function(req, res){
+router.get('/services/:username/:petname', function(req, res){
      res.send("TODOS OS SERVICOS DO " + req.params.username);
 });
 
@@ -45,6 +45,64 @@ router.post('/addPet', function(req, res){
                return res.status(500).send();
           }
           return res.status(200).send();
+     });
+});
+
+router.delete('/pets/:id', function(req, res){
+     var id = req.params.id;
+
+     Pet.findOneAndRemove({_id : id}, function(err, deletedpet){
+          if(err){
+               return res.status(500).send();
+          }
+
+          if(!deletedpet){
+               return res.status(404).send();
+          }
+
+          res.send("ok");
+     });
+});
+
+router.put('/pets/:id', function(req, res){
+     var id = req.params.id;
+
+     Pet.findOne({_id : id}, function(err, foundpet){
+          if(err){
+               return res.status(500).send();
+          }
+
+          if(!foundpet){
+               return res.status(404).send();
+          }
+
+          if(req.body.petName){
+               foundpet.petName = req.body.petName;
+          }
+
+          if(req.body.photo){
+               foundpet.petPhoto = req.body.photo;
+          }
+
+          if(req.body.race){
+               foundpet.race = req.body.race;
+          }
+
+          if(req.body.age){
+               foundpet.age = req.body.age;
+          }
+
+          foundpet.save(function(err, updatedpet){
+               if(err){
+                    return res.status(500).send();
+               }
+
+               if(!updatedpet){
+                    return res.status(404).send();
+               }
+
+               res.send("ok");
+          });
      });
 });
 
@@ -112,6 +170,7 @@ router.put('/userUpdate/:username', function(req, res){
 router.put('/dateservice', function(req, res){
      var id = req.body.id;
      var petname = req.body.petname;
+     var user = req.body.user;
 
      Service.findOne({_id : id}, function(err, foundService){
           if(err){
@@ -127,6 +186,7 @@ router.put('/dateservice', function(req, res){
           }
 
           foundService.reserva = petname;
+          foundService.login = user;
 
           foundService.save(function(err, updatedService){
                if(err){

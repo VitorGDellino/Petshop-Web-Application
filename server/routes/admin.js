@@ -92,6 +92,7 @@ router.post('/products', function(req, res){
 router.post('/services', function(req, res){
      var name = req.body.name;
      var photo = req.body.photo;
+     var user = req.body.user;
      var descricao = req.body.descricao;
      var preco = req.body.preco;
      var hora = req.body.hora;
@@ -100,6 +101,7 @@ router.post('/services', function(req, res){
 
      newservice = new Service();
      newservice.name = name;
+     newservice.login = user;
      newservice.photo = photo;
      newservice.descricao = descricao;
      newservice.preco = preco;
