@@ -641,206 +641,236 @@ function deletePet(id){
 function carregarServico(){
 	$(document).ready( function(){
         var id = $("#ID").val();
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://localhost:3000/utils/products/"+id, true);
+		
+		console.log(id);
+		
+		var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/servicesById/"+id, true);
 
         xhr.onload = function() {
             var text = xhr.responseText;
-          // console.log(JSON.parse(text).length);
-            // console.log(text);
-            text = text.split("}")
-            text.pop();
-            // console.log(text)
-            list = []
-            for (var i = 0; i < text.length; i++) {
-                text[i] = text[i].substr(1) + "}";
-                list.push(JSON.parse(text[i]));
-            }
-            console.log(list);
-            changeHTML(list, list.length, "#buy");
+            console.log(JSON.parse(text).length);
+            console.log(text);
+			
+			if(text==="erro"){
+				alert("Erro para achar o servico");
+			}else{
+				text = text.split("}")
+				text.pop();
+				console.log(text)
+				list = []
+				for (var i = 0; i < text.length; i++) {
+					text[i] = text[i].substr(1) + "}";
+					list.push(JSON.parse(text[i]));
+				}
+				
+				$("#productName").val(list[0].name);
+				$("#descricao").val(list[0].descricao);
+				$("#price").val(list[0].preco);
+				$("#hour").val(list[0].hora);
+				$("#date").val(list[0].date);
+			}
+			
+            // console.log(list);
         };
         xhr.onerror = function() {
           alert('Woops, there was an error making the request.');
         };
         xhr.send(null);
 
-
-		// try{
-            // var id = $("#ID").val();
-			// //Verifica se o id foi prrenchido
-            // if(id !== ""){
-
-				// var request = indexedDB.open("petshop", 3);
-
-				// //Abre o bd e a tabela de servicos
-				// request.onsuccess = function(event){
-					// var db = event.target.result;
-					// var transaction = db.transaction(["Servicos"], "readwrite");
-					// var store = transaction.objectStore("Servicos");
-					// var request = store.get(Number(id));
-
-					// request.onsuccess = function(e){
-
-						// //Verifica se o id existe
-						// var result = e.target.result;
-						// if(typeof result !== "undefined"){
-							// //Poe os valores nas txtbox
-							// document.getElementById("productName").value = request.result.name;
-							// document.getElementById("photo").src = request.result.photo;
-							// document.getElementById("descricao").value = request.result.descricao;
-							// document.getElementById("price").value = request.result.preco;
-							// document.getElementById("hour").value = request.result.hora;
-							// document.getElementById("date").value = request.result.date;
-							// // console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
-						// }else{
-							// alert("O ID não existe");
-						// }
-					// };
-
-					// db.close();
-				// }
-            // }else{
-                // alert("É necessário preencher o ID!");
-            // }
-        // }catch(err){
-			// console.log(err.message);
-        // }
     });
 }
 
 function atualizarServico(){
+	
 	$(document).ready( function(){
-        try{
-            var id = $("#ID").val();
+		try{
+			var id = $("#ID").val();
 			var name = $("#productName").val();
-            var photo = $("#photo").attr('src');
+            // var photo = $("#photo").attr('src');
 			var descricao = $("#descricao").val();
+            var date = $("#date").val();
 			var preco = $("#price").val();
             var hour = $("#hour").val();
-            var date = $("#date").val();
 
-            if(confirm("Quer mesmo atualizar o servico?")){
-				if(id !== "" && name !== "" && descricao !== "" && preco !== "" && hour !== "" && date !== ""){
+			//Verifica se o q foi colocado nas txtbox n esta vazio
+            if(name !== "" && descricao !== "" && date !== "" && preco !== "" && hour !== ""){
 
-					var request = indexedDB.open("petshop", 3);
+				var xhr = new XMLHttpRequest();
 
-					request.onsuccess = function(event){
-						var db = event.target.result;
-						var transaction = db.transaction(["Servicos"], "readwrite");
-						var store = transaction.objectStore("Servicos");
-						var request = store.get(Number(id));
+				xhr.open("PUT", "http://localhost:3000/admin/services/" + id, true);
 
-						request.onsuccess = function(e){
-							var data = request.result;
-							data.name = name;
-							data.photo = photo;
-							data.descricao = descricao;
-							data.preco = preco;
-							data.hora = hour,
-							data.date = date
-							// console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
+				xhr.setRequestHeader("Content-Type", "application/json");
 
-							var requestUpdate = store.put(data);
-								requestUpdate.onsuccess = function(event){
-									alert("O id " + id + " foi atualizado");
-								}
-						};
-
-						db.close();
-						goToServiceManager();
+				xhr.onreadystatechange = function(){
+					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+						var text = xhr.responseText;
+						if(text==="ok"){
+							alert("Alteração efetuada com sucesso");
+							goToServiceManager();
+						}else{
+							alert("Erro na alteração");
+						}
+						console.log(text);
 					}
-				}else{
-					alert("É necessário preencher os campos!");
-				}
-			}
+				};
+
+				data = JSON.stringify({name : name,
+					 photo : '',
+					 descricao : descricao,
+					 preco : preco,
+					 hora : hour,
+					 date : date,
+				});
+				console.log(data);
+				xhr.send(data);
+
+            }else{
+                alert("É necessário preencher todos os campos!");
+            }
         }catch(err){
 			console.log(err.message);
         }
     });
+	
+	// $(document).ready( function(){
+        // try{
+            // var id = $("#ID").val();
+			// var name = $("#productName").val();
+            // var photo = $("#photo").attr('src');
+			// var descricao = $("#descricao").val();
+            // var date = $("#date").val();
+			// var preco = $("#price").val();
+            // var hour = $("#hour").val();
+
+            // if(confirm("Quer mesmo atualizar o servico?")){
+				// if(id !== "" && name !== "" && descricao !== "" && preco !== "" && hour !== "" && date !== ""){
+
+					// var request = indexedDB.open("petshop", 3);
+
+					// request.onsuccess = function(event){
+						// var db = event.target.result;
+						// var transaction = db.transaction(["Servicos"], "readwrite");
+						// var store = transaction.objectStore("Servicos");
+						// var request = store.get(Number(id));
+
+						// request.onsuccess = function(e){
+							// var data = request.result;
+							// data.name = name;
+							// data.photo = photo;
+							// data.descricao = descricao;
+							// data.preco = preco;
+							// data.hora = hour,
+							// data.date = date
+							// // console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
+
+							// var requestUpdate = store.put(data);
+								// requestUpdate.onsuccess = function(event){
+									// alert("O id " + id + " foi atualizado");
+								// }
+						// };
+
+						// db.close();
+						// goToServiceManager();
+					// }
+				// }else{
+					// alert("É necessário preencher os campos!");
+				// }
+			// }
+        // }catch(err){
+			// console.log(err.message);
+        // }
+    // });
 }
 
 //Funcao que deleta o servico escolhido
 function deletarServico(){
 	$(document).ready( function(){
-        try{
-            var id = $("#ID").val();
+		try{
+
+			var id = $("#ID").val();
 			var name = $("#productName").val();
-			var descricao = $("#descricao").val();
-			var preco = $("#price").val();
+            var descricao = $("#descricao").val();
+            var price = $("#price").val();
             var hour = $("#hour").val();
             var date = $("#date").val();
 
-            if(confirm("Quer mesmo deletar o servico?")){
-				if(id !== "" && name !== "" && descricao !== "" && preco !== "" && hour !== "" && date !== ""){
-					//Verifica se os campos foram preenchidos
-					var request = indexedDB.open("petshop", 3);
+			//Verifica se o q foi colocado nas txtbox n esta vazio
+            if(id !== "" && name !== "" && descricao !== "" && price !== "" && hour !== "" && date !== ""){
 
-					request.onsuccess = function(event){
-						var db = event.target.result;
-						var transaction = db.transaction(["Servicos"], "readwrite");
-						var store = transaction.objectStore("Servicos");
+				var xhr = new XMLHttpRequest();
 
-						//Deleta o id e as informacoes associadas a aquele id
-						var request = store.delete(Number(id));
-						request.onsuccess = function(e){
-							alert("O id " + id + " foi deletado");
-						};
+				xhr.open("DELETE", "http://localhost:3000/admin/services/" + id, true);
 
-						db.close();
-						goToServiceManager();
+				xhr.setRequestHeader("Content-Type", "application/json");
+
+				xhr.onreadystatechange = function(){
+					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+						var text = xhr.responseText;
+						if(text==="ok"){
+							alert("Deletado com sucesso");
+							goToServiceManager();
+						}else{
+							alert("Erro para deletar");
+						}
+						console.log(text);
 					}
-				}else{
-					alert("É necessário preencher os campos!");
-				}
-			}
+				};
+
+				xhr.send(null);
+
+            }else{
+                alert("É necessário preencher todos os campos!");
+            }
         }catch(err){
 			console.log(err.message);
         }
     });
+	
 }
 
 //Funcao de carregar produto
 //Funciona da mesma maneira q carregarServico()
 function carregarProduto(){
 	$(document).ready( function(){
-        try{
-            var id = $("#ID").val();
+        var id = $("#ID").val();
+		
+		console.log(id);
+		
+		var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/products/"+id, true);
 
-            if(id !== ""){
-
-				var request = indexedDB.open("petshop", 3);
-
-				request.onsuccess = function(event){
-					var db = event.target.result;
-					var transaction = db.transaction(["Estoque"], "readwrite");
-					var store = transaction.objectStore("Estoque");
-					var request = store.get(Number(id));
-
-					request.onsuccess = function(e){
-
-						var result = e.target.result;
-						if(typeof result !== "undefined"){
-
-							document.getElementById("productName").value = request.result.name;
-							document.getElementById("photo").src = request.result.photo;
-							document.getElementById("descricao").value = request.result.descricao;
-							document.getElementById("price").value = request.result.preco;
-							document.getElementById("stock").value = request.result.qtd_estoque;
-							document.getElementById("sold").value = request.result.qtd_vendida;
-							// //console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
-						}else{
-							alert("O ID não existe");
-						}
-					};
-
-					db.close();
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            console.log(JSON.parse(text).length);
+            console.log(text);
+			
+			if(text==="erro"){
+				alert("Erro para achar o servico");
+			}else{
+				text = text.split("}")
+				text.pop();
+				console.log(text)
+				list = []
+				for (var i = 0; i < text.length; i++) {
+					text[i] = text[i].substr(1) + "}";
+					list.push(JSON.parse(text[i]));
 				}
-            }else{
-                alert("É necessário preencher o ID!");
-            }
-        }catch(err){
-			console.log(err.message);
-        }
+				
+				$("#productName").val(list[0].name);
+				$("#descricao").val(list[0].descricao);
+				$("#price").val(list[0].preco);
+				$("#stock").val(list[0].qtd_estoque);
+				$("#sold").val(list[0].qtd_vendida);
+			}
+			
+            // console.log(list);
+        };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
+
     });
 }
 
@@ -848,50 +878,50 @@ function carregarProduto(){
 //Funciona da mesma maneira q atualizarServico()
 function atualizarProduto(){
 	$(document).ready( function(){
-        try{
-            var id = $("#ID").val();
+		try{
+			var id = $("#ID").val();
 			var name = $("#productName").val();
-            var photo = $("#photo").attr('src');
-			var descricao = $("#descricao").val();
-			var preco = $("#price").val();
-			var stock = $("#stock").val();
-			var sold = $("#sold").val();
-			//console.log(photo);
+            var descricao = $("#descricao").val();
+            //var photo = $("#photo").attr('src');
+            var price = $("#price").val();
+            var stock = $("#stock").val();
+            var sold = $("#sold").val();
 
-            if(confirm("Quer mesmo atualizar o produto?")){
-				if(id !== "" && name !== "" && descricao !== "" && preco !== "" && stock !== "" && sold !== ""){
+			//Verifica se o q foi colocado nas txtbox n esta vazio
+            if(name !== "" && descricao !== "" && price !== "" && stock !== "" && sold !== ""){
 
-					var request = indexedDB.open("petshop", 3);
+				var xhr = new XMLHttpRequest();
 
-					request.onsuccess = function(event){
-						var db = event.target.result;
-						var transaction = db.transaction(["Estoque"], "readwrite");
-						var store = transaction.objectStore("Estoque");
-						var request = store.get(Number(id));
+				xhr.open("PUT", "http://localhost:3000/admin/products/" + id, true);
 
-						request.onsuccess = function(e){
-							var data = request.result;
-							data.name = name;
-							data.photo = photo;
-							data.descricao = descricao;
-							data.preco = preco;
-							data.qtd_estoque = stock;
-							data.qtd_vendida = sold;
-							// //console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
+				xhr.setRequestHeader("Content-Type", "application/json");
 
-							var requestUpdate = store.put(data);
-								requestUpdate.onsuccess = function(event){
-									alert("O id " + id + " foi atualizado");
-								}
-						};
-
-						db.close();
-						goToStockManager();
+				xhr.onreadystatechange = function(){
+					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+						var text = xhr.responseText;
+						if(text==="ok"){
+							alert("Alteração efetuada com sucesso");
+							goToStockManager();
+						}else{
+							alert("Erro na alteração");
+						}
+						console.log(text);
 					}
-				}else{
-					alert("É necessário preencher os campos!");
-				}
-			}
+				};
+
+				data = JSON.stringify({name : name,
+					 photo : '',
+					 descricao : descricao,
+					 preco : price,
+					 qtd_estoque : stock,
+					 qtd_vendida : sold,
+				});
+				console.log(data);
+				xhr.send(data);
+
+            }else{
+                alert("É necessário preencher todos os campos!");
+            }
         }catch(err){
 			console.log(err.message);
         }
@@ -901,41 +931,46 @@ function atualizarProduto(){
 //Funcao de deletar produto
 //Funciona da mesma maneira q deletarServico()
 function deletarProduto(){
+	
 	$(document).ready( function(){
-        try{
-            var id = $("#ID").val();
+		try{
+
+			var id = $("#ID").val();
 			var name = $("#productName").val();
 			var descricao = $("#descricao").val();
 			var preco = $("#price").val();
 			var stock = $("#stock").val();
 			var sold = $("#sold").val();
 
-            if(confirm("Quer mesmo deletar o produto?")){
-				if(id !== "" && name !== "" && descricao !== "" && preco !== ""){
+			//Verifica se o q foi colocado nas txtbox n esta vazio
+            if(id !== "" && name !== "" && descricao !== "" && preco !== "" && stock !== "" && sold !== ""){
 
-					var request = indexedDB.open("petshop", 3);
+				var xhr = new XMLHttpRequest();
 
-					request.onsuccess = function(event){
-						var db = event.target.result;
-						var transaction = db.transaction(["Estoque"], "readwrite");
-						var store = transaction.objectStore("Estoque");
+				xhr.open("DELETE", "http://localhost:3000/admin/products/" + id, true);
 
+				xhr.setRequestHeader("Content-Type", "application/json");
 
-						var request = store.delete(Number(id));
-						request.onsuccess = function(e){
-							alert("O id " + id + " foi deletado");
-						};
-
-						db.close();
-						goToStockManager();
+				xhr.onreadystatechange = function(){
+					if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+						var text = xhr.responseText;
+						if(text==="ok"){
+							alert("Deletado com sucesso");
+							goToStockManager();
+						}else{
+							alert("Erro para deletar");
+						}
+						console.log(text);
 					}
-				}else{
-					alert("É necessário preencher os campos!");
-				}
-			}
+				};
+
+				xhr.send(null);
+
+            }else{
+                alert("É necessário preencher todos os campos!");
+            }
         }catch(err){
 			console.log(err.message);
-
         }
     });
 }
@@ -952,12 +987,12 @@ function changeHTML(table, n, id){
     }else if(id === "#estoque"){		//Listar produtos
         var eachline = "<tr><th>Id</th><th>Nome</th><th>Descrição</th><th>Preço</th><th>Quantidade em estoque</th><th>Quantidade vendida</th></tr>";
         for(i=0; i<n; i++){
-            eachline += "<tr><td>"+ table[i].id.toString()+"</td><td>"+ table[i].name+"</td><td>"+table[i].descricao+"</td><td>"+table[i].preco.toString()+"</td><td>"+table[i].qtd_estoque.toString()+"</td><td>"+table[i].qtd_vendida.toString()+"</td></tr>";
+            eachline += "<tr><td>"+ table[i]._id+"</td><td>"+ table[i].name+"</td><td>"+table[i].descricao+"</td><td>"+table[i].preco.toString()+"</td><td>"+table[i].qtd_estoque.toString()+"</td><td>"+table[i].qtd_vendida.toString()+"</td></tr>";
         }
     }else if(id === "#servicos"){		//Listar servicos
         var eachline = "<tr><th>Id</th><th>Nome</th><th>Descrição</th><th>Preço</th></tr>";
         for(i=0; i<n; i++){
-            eachline += "<tr><td>"+ table[i].id.toString()+"</td><td>"+ table[i].name+"</td><td>"+table[i].descricao+"</td><td>"+table[i].preco.toString()+"</td></tr>";
+            eachline += "<tr><td>"+ table[i]._id+"</td><td>"+ table[i].name+"</td><td>"+table[i].descricao+"</td><td>"+table[i].preco.toString()+"</td></tr>";
         }
     }else if(id === "#buy"){
         var eachline = ""
@@ -1156,80 +1191,99 @@ function listPets(){
 //Funcao para listar os produtos
 //Funciona do mesmo jeito q a listPets()
 function listStock(){
-    $(document).ready( function(){
-        try{
+    
+	$(document).ready( function(){
 
-            var n = 0;
-            var table;
-            var request = indexedDB.open("petshop", 3);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/products", true);
 
-            //console.log("estoque");
-
-            request.onsuccess = function(event){
-                var db = event.target.result;
-
-                var transaction = db.transaction(["Estoque"], "readwrite");
-
-                var store = transaction.objectStore("Estoque");
-
-                var count = store.count();
-
-                count.onsuccess = function(){
-                    n = count.result;
-                };
-
-                var getAll = store.getAll();
-
-                getAll.onsuccess = function(e){
-                    table = e.target.result;
-                    changeHTML(table, n, "#estoque");
-                };
-
-                db.close();
-            };
-
-        }catch(err){
-            console.log(err.message);
-        }
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            // console.log(JSON.parse(text).length);
+            // console.log(text);
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = []
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                list.push(JSON.parse(text[i]));
+            }
+            // console.log(list);
+            changeHTML(list, list.length, "#estoque");
+        };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
     });
+	
+	// $(document).ready( function(){
+        // try{
+
+            // var n = 0;
+            // var table;
+            // var request = indexedDB.open("petshop", 3);
+
+            // //console.log("estoque");
+
+            // request.onsuccess = function(event){
+                // var db = event.target.result;
+
+                // var transaction = db.transaction(["Estoque"], "readwrite");
+
+                // var store = transaction.objectStore("Estoque");
+
+                // var count = store.count();
+
+                // count.onsuccess = function(){
+                    // n = count.result;
+                // };
+
+                // var getAll = store.getAll();
+
+                // getAll.onsuccess = function(e){
+                    // table = e.target.result;
+                    // changeHTML(table, n, "#estoque");
+                // };
+
+                // db.close();
+            // };
+
+        // }catch(err){
+            // console.log(err.message);
+        // }
+    // });
 }
 
 //Funcao para listar os servicos
 //Funciona do mesmo jeito q a listPets()
 function listServices(){
-    $(document).ready( function(){
-        try{
+	
+	$(document).ready( function(){
 
-            var n = 0;
-            var table;
-            var request = indexedDB.open("petshop", 3);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/services", true);
 
-            request.onsuccess = function(event){
-                var db = event.target.result;
-
-                var transaction = db.transaction(["Servicos"], "readwrite");
-
-                var store = transaction.objectStore("Servicos");
-
-                var count = store.count();
-
-                count.onsuccess = function(){
-                    n = count.result;
-                };
-
-                var getAll = store.getAll();
-
-                getAll.onsuccess = function(e){
-                    table = e.target.result;
-                    changeHTML(table, n, "#servicos");
-                };
-
-                db.close();
-            };
-
-        }catch(err){
-            console.log(err.message);
-        }
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            // console.log(JSON.parse(text).length);
+            // console.log(text);
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = []
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                list.push(JSON.parse(text[i]));
+            }
+            // console.log(list);
+            changeHTML(list, list.length, "#servicos");
+        };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
     });
 }
 

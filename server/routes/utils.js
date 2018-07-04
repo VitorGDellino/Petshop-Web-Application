@@ -61,13 +61,14 @@ router.get('/products', function(req, res){
 
 router.get('/products/:id', function(req, res){
      var id = req.params.id;
-     Product.findOne({_id : id}, function(err, foundProduct){
+	 
+     Product.find({_id : id}, function(err, foundProduct){
           if(err){
-               return res.status(500).send();
+               return res.status(500).send("erro");
           }
 
           if(!foundProduct){
-               return res.status(404).send();
+               return res.status(404).send("erro");
           }
 
           return res.send(foundProduct);
@@ -85,6 +86,21 @@ router.get('/services', function(req, res){
           }
 
           res.send(foundData);
+     });
+});
+
+router.get('/servicesById/:id', function(req, res){
+     var id = req.params.id;
+	 Service.find({_id : id}, function(err, foundService){
+          if(err){
+               return res.status(500).send("erro");
+          }
+
+          if(!foundService){
+               return res.status(404).send("erro");
+          }
+
+          return res.send(foundService);
      });
 });
 
