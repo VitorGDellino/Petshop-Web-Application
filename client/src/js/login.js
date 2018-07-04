@@ -447,6 +447,8 @@ function registerPet(){
         data = JSON.stringify({login: loggedUser, petName: petName, petPhoto: petPhoto, race: race, age: age});
 
         xhr.send(data);
+
+        goToRegisterOrListPet();
     });
 }
 
@@ -603,6 +605,7 @@ function adminNavBar(){
 
 //Funcao que deleta o animal do usuario do banco de dados
 function deletePet(id){
+    console.log("antes");
     $(document).ready( function(){
         if(confirm("Deseja mesmo deletar esse Animal?")){
             // var request = indexedDB.open("petshop", 3);
@@ -633,6 +636,9 @@ function deletePet(id){
             }
 
             xhr.send(null);
+
+            goToRegisterOrListPet();
+
         }
     });
 }
@@ -985,11 +991,12 @@ function changeHTML(table, n, id){
 				eachline += '<li><font size="3" color="red"> HORÁRIO RESERVADO </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+ "<br>" + '<a><button class="btn" type="button" disabled>Reservar</button></a></li>';
 			}
 		}
-    }else{
+    }else if(id === "#pets"){
         var eachline="";
+        console.log("ANIMAIS");
         for(i=0; i<n; i++){
-            //console.log(n);
-            eachline += '<li><img src='+ table[i].petPhoto+ ' alt="Someone" style="width:130px; height:130px;"><br>Nome: ' + table[i].petName + "<br>Raça: " + table[i].race + "<br>Idade: " + table[i].age + "<br>" + '<a><button class="btn" type="button" onClick="goToEditPet('+table[i]._id+');">Atualizar</button></a><button class="btn" type="button" onclick="deletePet('+table[i].id+')">Deletar</button><br></li>';
+            console.log(typeof(table[i]._id), table[i]._id);
+            eachline += '<li><img src="'+ table[i].petPhoto+ '" alt="Someone" style="width:130px; height:130px;"/><br>Nome: ' + table[i].petName + "<br>Raça: " + table[i].race + "<br>Idade: " + table[i].age.toString() + "<br>" + '<a><button class="btn" type="button" id="'+table[i]._id.toString()+'"onclick="editPet(this.id)">Atualizar</button></a><button class="btn" type="button"  id="'+table[i]._id.toString()+'"onclick="deletePet(this.id)">Deletar</button><br></li>';
         }
     }
     //console.log(id);
@@ -1142,6 +1149,7 @@ function listPets(){
                 text[i] = text[i].substr(1) + "}";
                 list.push(JSON.parse(text[i]));
             }
+            console.log("FJAKSHDFLKJAHSDKFHAKSDH");
             console.log(list);
             changeHTML(list, list.length, "#pets");
         };
