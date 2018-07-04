@@ -297,9 +297,7 @@ function updateStorage(id, quantidadeVendida) {
     xhr.setRequestHeader("Content-Type", "application/json");
 
     xhr.onreadystatechange = function() {
-        console.log("DEU CERTO");
-        console.log(id);
-        console.log(quantidadeVendida);
+
     }
 
     data = JSON.stringify({id: id, qtd: quantidadeVendida});
@@ -447,69 +445,37 @@ function registerPet(){
         data = JSON.stringify({login: loggedUser, petName: petName, petPhoto: petPhoto, race: race, age: age});
 
         xhr.send(data);
+
+        goToRegisterOrListPet();
     });
 }
 
 //funcao para editar os animais
 function editPet(){
     $(document).ready( function(){
+
+        console.log("entrou edit");
+
         var newPetName = $("#petName").val();
         var newPetPhoto = $("#photo").attr('src');
         var newRace = $("#race").val();
         var newAge = $("#age").val();
 
-        var request = indexedDB.open("petshop", 3);
-		//pega os valores das caixas
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", "http://localhost:3000/client/pets/"+pet_id, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
 
-        request.onsuccess = function(event){
-            var db = event.target.result;
+        xhr.onreadystatechange = function() {
 
-            var transaction = db.transaction(["Animais"], "readwrite");
+        }
 
-            var store = transaction.objectStore("Animais");
+        data = JSON.stringify({petName: newPetName, photo: newPetPhoto, race: newRace, age: newAge});
 
-            var get = store.get(pet_id);
+        xhr.send(data);
 
-            get.onsuccess = function(e){
-                var result = e.target.result;
+        goToRegisterOrListPet();
 
-				//Verifica se o id informado é valido
-                if(typeof result !== "undefined"){
-                    if(newPetName === ""){
-                        newPetName = result.petName;
-                    }
 
-                    if(newRace === ""){
-                        newRace = result.race;
-                    }
-
-                    if(newPetPhoto === "../assets/pic.jpg"){
-                        newPetPhoto = result.petPhoto;
-                    }
-
-                    if(newAge === ""){
-                        newAge = result.age;
-                    }
-
-                    var pet = {
-                        id: Number(pet_id),
-                        petName: newPetName,
-                        petPhoto: newPetPhoto,
-                        race: newRace,
-                        age: Number(newAge),
-                        login: result.login
-                    };
-					//Atualiza os valores no banco de dados
-                    var update = store.put(pet);
-
-                }
-            };
-
-            db.close();
-
-            goToRegisterOrListPet();
-
-        };
     });
 
 }
@@ -603,25 +569,9 @@ function adminNavBar(){
 
 //Funcao que deleta o animal do usuario do banco de dados
 function deletePet(id){
+    console.log("antes");
     $(document).ready( function(){
         if(confirm("Deseja mesmo deletar esse Animal?")){
-            // var request = indexedDB.open("petshop", 3);
-            //
-            // request.onsuccess = function(event){
-            //     //Abre o banco de dados e deleta o id selecionado
-			// 	var db = event.target.result
-            //
-            //     var transaction = db.transaction(["Animais"], "readwrite");
-            //
-            //     var store = transaction.objectStore("Animais");
-            //
-            //     var del = store.delete(id);
-            //
-            //     db.close();
-            //
-            //     goToRegisterOrListPet();
-            // };
-
             console.log(id);
 
             var xhr = new XMLHttpRequest();
@@ -633,6 +583,8 @@ function deletePet(id){
             }
 
             xhr.send(null);
+
+            goToRegisterOrListPet();
         }
     });
 }
@@ -1020,11 +972,12 @@ function changeHTML(table, n, id){
 				eachline += '<li><font size="3" color="red"> HORÁRIO RESERVADO </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+ "<br>" + '<a><button class="btn" type="button" disabled>Reservar</button></a></li>';
 			}
 		}
-    }else{
+    }else if(id === "#pets"){
         var eachline="";
+        console.log("ANIMAIS");
         for(i=0; i<n; i++){
-            //console.log(n);
-            eachline += '<li><img src='+ table[i].petPhoto+ ' alt="Someone" style="width:130px; height:130px;"><br>Nome: ' + table[i].petName + "<br>Raça: " + table[i].race + "<br>Idade: " + table[i].age + "<br>" + '<a><button class="btn" type="button" onClick="goToEditPet('+table[i]._id+');">Atualizar</button></a><button class="btn" type="button" onclick="deletePet('+table[i].id+')">Deletar</button><br></li>';
+            console.log(typeof(table[i]._id), table[i]._id);
+            eachline += '<li><img src="'+ table[i].petPhoto+ '" alt="Someone" style="width:130px; height:130px;"/><br>Nome: ' + table[i].petName + "<br>Raça: " + table[i].race + "<br>Idade: " + table[i].age.toString() + "<br>" + '<a><button class="btn" type="button" id="'+table[i]._id.toString()+'"onclick="goToEditPet(this.id)">Atualizar</button></a><button class="btn" type="button"  id="'+table[i]._id.toString()+'"onclick="deletePet(this.id)">Deletar</button><br></li>';
         }
     }
     //console.log(id);
@@ -1072,90 +1025,162 @@ function Reservar(id){
 
 function listScheduleService(){
     $(document).ready( function(){
-        try{
-            var date = $("#Calendario").val();
-			//console.log(date);
-            var n = 0;
-            var table;
-            var request = indexedDB.open("petshop", 3);
+        // try{
+        //     var date = $("#Calendario").val();
+		// 	//console.log(date);
+        //     var n = 0;
+        //     var table;
+        //     var request = indexedDB.open("petshop", 3);
+        //
+		// 	//Abre o banco de dados e abre a tabela de animais
+		// 	request.onsuccess = function(event){
+        //         var db = event.target.result;
+        //
+        //         var transaction = db.transaction(["Animais"], "readwrite");
+        //
+        //         var store = transaction.objectStore("Animais");
+        //
+        //         var count = store.count();
+        //
+        //         count.onsuccess = function(){
+        //             n = count.result;
+        //         };
+        //
+        //         var getAll = store.getAll();
+        //
+        //         getAll.onsuccess = function(e){
+        //             table = e.target.result;
+        //             var table2 = [];
+        //             var n2 = 0;
+        //
+		// 			//Usa a funcao changeHTML para mudar o HTML da pagina de acordo com o que tem no banco de dados
+        //             for (i=0;i<n;i++){
+        //                 if(table[i].login === loggedUser){
+        //                     table2[n2] = table[i];
+        //                     n2++;
+        //                 }
+        //             }
+        //             changeHTML(table2, n2, "#animais");
+        //         };
+        //
+        //         db.close();
+        //     };
+        //
+        //     request = indexedDB.open("petshop", 3);
+		// 	n = 0;
+		// 	request.onsuccess = function(event){
+        //         var db = event.target.result;
+        //
+        //         var transaction = db.transaction(["Servicos"], "readwrite");
+        //
+        //         var store = transaction.objectStore("Servicos");
+        //
+        //         var count = store.count();
+        //
+        //         count.onsuccess = function(){
+        //             n = count.result;
+        //         };
+        //
+        //         var getAll = store.getAll();
+        //
+        //         getAll.onsuccess = function(e){
+        //             table = e.target.result;
+        //             var table2 = [];
+        //             var n2 = 0;
+		// 			////console.log(table[0].date);
+        //
+		// 			//Usa a funcao changeHTML para mudar o HTML da pagina de acordo com o que tem no banco de dados
+        //             for (i=0;i<n;i++){
+        //                 if(table[i].date === date){
+        //                     table2[n2] = table[i];
+        //                     n2++;
+        //                 }
+        //             }
+        //
+		// 			if(n2!==0){
+        //                 changeHTML(table2, n2, "#reservas");
+		// 			}else{
+		// 				alert("Não tem servico nesse dia");
+		// 			}
+        //         };
+        //
+        //         db.close();
+        //     };
+        // }catch(err){
+        //     console.log(err.message);
+        // }
 
-			//Abre o banco de dados e abre a tabela de animais
-			request.onsuccess = function(event){
-                var db = event.target.result;
 
-                var transaction = db.transaction(["Animais"], "readwrite");
+        var date = $("#Calendario").val();
 
-                var store = transaction.objectStore("Animais");
+        console.log("entrou servicos");
+        console.log(date);
 
-                var count = store.count();
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/client/pets/"+loggedUser, true);
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            console.log("entrou animais");
+          // console.log(JSON.parse(text).length);
+            // console.log(text);
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = [];
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                list.push(JSON.parse(text[i]));
+            }
 
-                count.onsuccess = function(){
-                    n = count.result;
-                };
+            changeHTML(list, list.length, "#animais");
 
-                var getAll = store.getAll();
+        };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
 
-                getAll.onsuccess = function(e){
-                    table = e.target.result;
-                    var table2 = [];
-                    var n2 = 0;
 
-					//Usa a funcao changeHTML para mudar o HTML da pagina de acordo com o que tem no banco de dados
-                    for (i=0;i<n;i++){
-                        if(table[i].login === loggedUser){
-                            table2[n2] = table[i];
-                            n2++;
-                        }
-                    }
-                    changeHTML(table2, n2, "#animais");
-                };
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open("GET", "http://localhost:3000/client/services/"+loggedUser+"/"+"petName");
+        xhr2.onload = function() {
+            var text = xhr2.responseText;
+          // console.log(JSON.parse(text).length);
+            console.log("entrou servicos2");
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = [];
+            n = 0;
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                var aux = JSON.parse(text[i]);
+                console.log(aux.date);
+                console.log(date);
+                if (aux.date === date) {
+                    list.push();
+                    n++;
+                }
 
-                db.close();
-            };
+            }
+            if (n > 0) {
+                changeHTML(list, list.length, "#reservas");
+            } else {
+                alert("nao tem servicos reservados para esse dia!");
+            }
 
-            request = indexedDB.open("petshop", 3);
-			n = 0;
-			request.onsuccess = function(event){
-                var db = event.target.result;
+        };
+        xhr2.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr2.send(null);
 
-                var transaction = db.transaction(["Servicos"], "readwrite");
 
-                var store = transaction.objectStore("Servicos");
 
-                var count = store.count();
 
-                count.onsuccess = function(){
-                    n = count.result;
-                };
 
-                var getAll = store.getAll();
 
-                getAll.onsuccess = function(e){
-                    table = e.target.result;
-                    var table2 = [];
-                    var n2 = 0;
-					////console.log(table[0].date);
 
-					//Usa a funcao changeHTML para mudar o HTML da pagina de acordo com o que tem no banco de dados
-                    for (i=0;i<n;i++){
-                        if(table[i].date === date){
-                            table2[n2] = table[i];
-                            n2++;
-                        }
-                    }
-
-					if(n2!==0){
-                        changeHTML(table2, n2, "#reservas");
-					}else{
-						alert("Não tem servico nesse dia");
-					}
-                };
-
-                db.close();
-            };
-        }catch(err){
-            console.log(err.message);
-        }
     });
 }
 
@@ -1177,6 +1202,7 @@ function listPets(){
                 text[i] = text[i].substr(1) + "}";
                 list.push(JSON.parse(text[i]));
             }
+            console.log("FJAKSHDFLKJAHSDKFHAKSDH");
             console.log(list);
             changeHTML(list, list.length, "#pets");
         };
