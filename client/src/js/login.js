@@ -593,9 +593,9 @@ function deletePet(id){
 function carregarServico(){
 	$(document).ready( function(){
         var id = $("#ID").val();
-		
+
 		console.log(id);
-		
+
 		var xhr = new XMLHttpRequest();
         xhr.open("GET", "http://localhost:3000/utils/servicesById/"+id, true);
 
@@ -603,7 +603,7 @@ function carregarServico(){
             var text = xhr.responseText;
             console.log(JSON.parse(text).length);
             console.log(text);
-			
+
 			if(text==="erro"){
 				alert("Erro para achar o servico");
 			}else{
@@ -615,7 +615,7 @@ function carregarServico(){
 					text[i] = text[i].substr(1) + "}";
 					list.push(JSON.parse(text[i]));
 				}
-				
+
 				$("#productName").val(list[0].name);
 				$("#photo")
                 .attr('src', list[0].photo)
@@ -626,7 +626,7 @@ function carregarServico(){
 				$("#hour").val(list[0].hora);
 				$("#date").val(list[0].date);
 			}
-			
+
             // console.log(list);
         };
         xhr.onerror = function() {
@@ -638,7 +638,7 @@ function carregarServico(){
 }
 
 function atualizarServico(){
-	
+
 	$(document).ready( function(){
 		try{
 			var id = $("#ID").val();
@@ -688,55 +688,7 @@ function atualizarServico(){
 			console.log(err.message);
         }
     });
-	
-	// $(document).ready( function(){
-        // try{
-            // var id = $("#ID").val();
-			// var name = $("#productName").val();
-            // var photo = $("#photo").attr('src');
-			// var descricao = $("#descricao").val();
-            // var date = $("#date").val();
-			// var preco = $("#price").val();
-            // var hour = $("#hour").val();
 
-            // if(confirm("Quer mesmo atualizar o servico?")){
-				// if(id !== "" && name !== "" && descricao !== "" && preco !== "" && hour !== "" && date !== ""){
-
-					// var request = indexedDB.open("petshop", 3);
-
-					// request.onsuccess = function(event){
-						// var db = event.target.result;
-						// var transaction = db.transaction(["Servicos"], "readwrite");
-						// var store = transaction.objectStore("Servicos");
-						// var request = store.get(Number(id));
-
-						// request.onsuccess = function(e){
-							// var data = request.result;
-							// data.name = name;
-							// data.photo = photo;
-							// data.descricao = descricao;
-							// data.preco = preco;
-							// data.hora = hour,
-							// data.date = date
-							// // console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
-
-							// var requestUpdate = store.put(data);
-								// requestUpdate.onsuccess = function(event){
-									// alert("O id " + id + " foi atualizado");
-								// }
-						// };
-
-						// db.close();
-						// goToServiceManager();
-					// }
-				// }else{
-					// alert("É necessário preencher os campos!");
-				// }
-			// }
-        // }catch(err){
-			// console.log(err.message);
-        // }
-    // });
 }
 
 //Funcao que deleta o servico escolhido
@@ -782,7 +734,7 @@ function deletarServico(){
 			console.log(err.message);
         }
     });
-	
+
 }
 
 //Funcao de carregar produto
@@ -790,9 +742,9 @@ function deletarServico(){
 function carregarProduto(){
 	$(document).ready( function(){
         var id = $("#ID").val();
-		
+
 		console.log(id);
-		
+
 		var xhr = new XMLHttpRequest();
         xhr.open("GET", "http://localhost:3000/utils/products/"+id, true);
 
@@ -800,7 +752,7 @@ function carregarProduto(){
             var text = xhr.responseText;
             console.log(JSON.parse(text).length);
             console.log(text);
-			
+
 			if(text==="erro"){
 				alert("Erro para achar o servico");
 			}else{
@@ -812,7 +764,7 @@ function carregarProduto(){
 					text[i] = text[i].substr(1) + "}";
 					list.push(JSON.parse(text[i]));
 				}
-				
+
 				$("#productName").val(list[0].name);
 				$("#photo")
                 .attr('src', list[0].photo)
@@ -823,7 +775,7 @@ function carregarProduto(){
 				$("#stock").val(list[0].qtd_estoque);
 				$("#sold").val(list[0].qtd_vendida);
 			}
-			
+
             // console.log(list);
         };
         xhr.onerror = function() {
@@ -891,7 +843,7 @@ function atualizarProduto(){
 //Funcao de deletar produto
 //Funciona da mesma maneira q deletarServico()
 function deletarProduto(){
-	
+
 	$(document).ready( function(){
 		try{
 
@@ -975,9 +927,9 @@ function changeHTML(table, n, id){
             console.log(n);
 			if(table[i].reserva==="none"){
                 console.log("aqui");
-				eachline += '<li><font size="3"> HORÁRIO LIVRE </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+"<br>" + '<br>Preço: R$'+table[i].preco+"<br>" + '<a><button class="btn" type="button" onClick="Reservar('+table[i].id+');">Reservar</button></a></li>';
+				eachline += '<li><font size="3"> HORÁRIO LIVRE </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+"<br>" + '<br>Preço: R$'+table[i].preco+"<br>" + '<a><button id="'+table[i]._id+'" class="btn" type="button" onClick="Reservar(this.id);">Reservar</button></a></li>';
 			}else{
-				eachline += '<li><font size="3" color="red"> HORÁRIO RESERVADO </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+ "<br>" + '<a><button class="btn" type="button" disabled>Reservar</button></a></li>';
+				eachline += '<li><font size="3" color="red"> HORÁRIO RESERVADO </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+ "<br>" + '<a><button  id="'+table[i]._id+'"class="btn" type="button" onClick="Reservar(this.id);">Reservar</button></a></li>';
 			}
 		}
     }else if(id === "#pets"){
@@ -994,60 +946,36 @@ function changeHTML(table, n, id){
 
 function Reservar(id){
 	$(document).ready( function(){
-		var pet = $("#pet").val();
-		console.log(pet);
 
-		if(pet!==null){
-			var request = indexedDB.open("petshop", 3);
+        console.log("entrou aqui");
 
-			request.onsuccess = function(event){
-				//Abre o banco de dados e deleta o id selecionado
-				var db = event.target.result
-
-				var transaction = db.transaction(["Servicos"], "readwrite");
-
-				var store = transaction.objectStore("Servicos");
-
-				var request = store.get(Number(id));
-
-				request.onsuccess = function(e){
-					var data = request.result;
-					data.reserva = pet;
-					// console.log(request.result.name + " " + request.result.descricao + " " + request.result.preco);
-
-					var requestUpdate = store.put(data);
-					requestUpdate.onsuccess = function(event){
-						alert("O id " + id + " foi atualizado");
-					}
-				};
-
-				db.close();
-
-				goToSchedule();
-			};
-		}else{
-			alert("Cadastre um animal antes");
-		}
+        var pet = $("#pet").val();
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", "http://localhost:3000/client/dateservice", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            if (text == "Horário indisponível") {
+                alert(text);
+            }
+        }
+        data = JSON.stringify({id: id, petname: pet, user: loggedUser});
+        console.log(data);
+        xhr.send(data);
     });
 }
 
 function listScheduleService(){
     $(document).ready( function(){
-        var date = $("#Calendario").val();
 
-        console.log("entrou servicos");
-        console.log(date);
+        var date = $("#Calendario").val();
 
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "http://localhost:3000/client/pets/"+loggedUser, true);
         xhr.onload = function() {
             var text = xhr.responseText;
-            console.log("entrou animais");
-          // console.log(JSON.parse(text).length);
-            // console.log(text);
             text = text.split("}")
             text.pop();
-            // console.log(text)
             list = [];
             for (var i = 0; i < text.length; i++) {
                 text[i] = text[i].substr(1) + "}";
@@ -1062,29 +990,23 @@ function listScheduleService(){
         };
         xhr.send(null);
 
-
         var xhr2 = new XMLHttpRequest();
-        xhr2.open("GET", "http://localhost:3000/client/services/"+loggedUser+"/"+"petName");
+        xhr2.open("GET", "http://localhost:3000/utils/services/"+date);
         xhr2.onload = function() {
             var text = xhr2.responseText;
-          // console.log(JSON.parse(text).length);
-            console.log("entrou servicos2");
             text = text.split("}")
             text.pop();
-            // console.log(text)
             list = [];
             n = 0;
             for (var i = 0; i < text.length; i++) {
+                console.log("entro for");
                 text[i] = text[i].substr(1) + "}";
                 var aux = JSON.parse(text[i]);
-                // console.log(aux.date);
-                // console.log(date);
-                if (aux.date === date) {
-                    list.push();
-                    n++;
-                }
-
+                list.push(aux);
+                n++;
             }
+
+            console.log(list);
             if (n > 0) {
                 changeHTML(list, list.length, "#reservas");
             } else {
@@ -1096,13 +1018,6 @@ function listScheduleService(){
           alert('Woops, there was an error making the request.');
         };
         xhr2.send(null);
-
-
-
-
-
-
-
     });
 }
 
@@ -1139,7 +1054,7 @@ function listPets(){
 //Funcao para listar os produtos
 //Funciona do mesmo jeito q a listPets()
 function listStock(){
-    
+
 	$(document).ready( function(){
 
         var xhr = new XMLHttpRequest();
@@ -1165,49 +1080,13 @@ function listStock(){
         };
         xhr.send(null);
     });
-	
-	// $(document).ready( function(){
-        // try{
 
-            // var n = 0;
-            // var table;
-            // var request = indexedDB.open("petshop", 3);
-
-            // //console.log("estoque");
-
-            // request.onsuccess = function(event){
-                // var db = event.target.result;
-
-                // var transaction = db.transaction(["Estoque"], "readwrite");
-
-                // var store = transaction.objectStore("Estoque");
-
-                // var count = store.count();
-
-                // count.onsuccess = function(){
-                    // n = count.result;
-                // };
-
-                // var getAll = store.getAll();
-
-                // getAll.onsuccess = function(e){
-                    // table = e.target.result;
-                    // changeHTML(table, n, "#estoque");
-                // };
-
-                // db.close();
-            // };
-
-        // }catch(err){
-            // console.log(err.message);
-        // }
-    // });
 }
 
 //Funcao para listar os servicos
 //Funciona do mesmo jeito q a listPets()
 function listServices(){
-	
+
 	$(document).ready( function(){
 
         var xhr = new XMLHttpRequest();
@@ -1215,11 +1094,8 @@ function listServices(){
 
         xhr.onload = function() {
             var text = xhr.responseText;
-            // console.log(JSON.parse(text).length);
-            // console.log(text);
             text = text.split("}")
             text.pop();
-            // console.log(text)
             list = []
             for (var i = 0; i < text.length; i++) {
                 text[i] = text[i].substr(1) + "}";
