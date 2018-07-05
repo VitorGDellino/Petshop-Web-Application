@@ -593,9 +593,9 @@ function deletePet(id){
 function carregarServico(){
 	$(document).ready( function(){
         var id = $("#ID").val();
-		
+
 		console.log(id);
-		
+
 		var xhr = new XMLHttpRequest();
         xhr.open("GET", "http://localhost:3000/utils/servicesById/"+id, true);
 
@@ -617,10 +617,6 @@ function carregarServico(){
 				}
 				
 				$("#productName").val(list[0].name);
-				$("#photo")
-                .attr('src', list[0].photo)
-                .width(130)
-                .height(130);
 				$("#descricao").val(list[0].descricao);
 				$("#price").val(list[0].preco);
 				$("#hour").val(list[0].hora);
@@ -643,7 +639,7 @@ function atualizarServico(){
 		try{
 			var id = $("#ID").val();
 			var name = $("#productName").val();
-            var photo = $("#photo").attr('src');
+            // var photo = $("#photo").attr('src');
 			var descricao = $("#descricao").val();
             var date = $("#date").val();
 			var preco = $("#price").val();
@@ -672,7 +668,7 @@ function atualizarServico(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : photo,
+					 photo : '',
 					 descricao : descricao,
 					 preco : preco,
 					 hora : hour,
@@ -782,7 +778,7 @@ function deletarServico(){
 			console.log(err.message);
         }
     });
-	
+
 }
 
 //Funcao de carregar produto
@@ -790,9 +786,9 @@ function deletarServico(){
 function carregarProduto(){
 	$(document).ready( function(){
         var id = $("#ID").val();
-		
+
 		console.log(id);
-		
+
 		var xhr = new XMLHttpRequest();
         xhr.open("GET", "http://localhost:3000/utils/products/"+id, true);
 
@@ -800,7 +796,7 @@ function carregarProduto(){
             var text = xhr.responseText;
             console.log(JSON.parse(text).length);
             console.log(text);
-			
+
 			if(text==="erro"){
 				alert("Erro para achar o servico");
 			}else{
@@ -812,12 +808,8 @@ function carregarProduto(){
 					text[i] = text[i].substr(1) + "}";
 					list.push(JSON.parse(text[i]));
 				}
-				
+
 				$("#productName").val(list[0].name);
-				$("#photo")
-                .attr('src', list[0].photo)
-                .width(130)
-                .height(130);
 				$("#descricao").val(list[0].descricao);
 				$("#price").val(list[0].preco);
 				$("#stock").val(list[0].qtd_estoque);
@@ -842,7 +834,7 @@ function atualizarProduto(){
 			var id = $("#ID").val();
 			var name = $("#productName").val();
             var descricao = $("#descricao").val();
-            var photo = $("#photo").attr('src');
+            //var photo = $("#photo").attr('src');
             var price = $("#price").val();
             var stock = $("#stock").val();
             var sold = $("#sold").val();
@@ -870,7 +862,7 @@ function atualizarProduto(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : photo,
+					 photo : '',
 					 descricao : descricao,
 					 preco : price,
 					 qtd_estoque : stock,
@@ -1085,6 +1077,8 @@ function listScheduleService(){
                 }
 
             }
+
+            console.log(list);
             if (n > 0) {
                 changeHTML(list, list.length, "#reservas");
             } else {
@@ -1280,7 +1274,7 @@ function registerAdmin(){
 
 					data = JSON.stringify({login : login,
 						password : password,
-						photo : photo,
+						photo : '',
 						name : name,
 						email : email,
 						tel : tel,
@@ -1347,7 +1341,7 @@ function registerClient(){
 
 					data = JSON.stringify({login : login,
 						password : password,
-						photo : photo,
+						photo : '',
 						name : name,
 						email : email,
 						tel : tel,
@@ -1405,7 +1399,7 @@ function registerProduct(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : photo,
+					 photo : '',
 					 descricao : descricao,
 					 preco : price,
 					 qtd_estoque : stock,
@@ -1459,7 +1453,7 @@ function registerService(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : photo,
+					 photo : '',
 					 descricao : descricao,
 					 preco : price,
 					 hora : hour,
@@ -1498,12 +1492,11 @@ function userLogin(){
 		xhr.onreadystatechange = function(){
 			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 				var text = xhr.responseText;
-				if(text==="erro"){
-					alert("Usuario e senha inválidas");
-				}else{
+				if(text==="ok"){
 					userNavBar();
-					var inf = JSON.parse(text);
-					userCard(userName, inf.photo);
+					userCard(userName, null);
+				}else{
+					alert("Usuario e senha inválidas");
 				}
 				// console.log(text);
 			}
@@ -1542,13 +1535,11 @@ function adminLogin(){
 		xhr.onreadystatechange = function(){
 			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 				var text = xhr.responseText;
-				// console.log(text);
-				if(text==="erro"){
-					alert("Usuario e senha inválidas");
-				}else{
+				if(text==="ok"){
 					adminNavBar();
-					var inf = JSON.parse(text);
-					adminCard(userName, inf.photo);
+					adminCard(userName, null);
+				}else{
+					alert("Usuario e senha inválidas");
 				}
 				// console.log(text);
 			}
