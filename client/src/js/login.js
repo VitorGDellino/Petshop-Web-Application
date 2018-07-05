@@ -617,6 +617,10 @@ function carregarServico(){
 				}
 				
 				$("#productName").val(list[0].name);
+				$("#photo")
+                .attr('src', list[0].photo)
+                .width(130)
+                .height(130);
 				$("#descricao").val(list[0].descricao);
 				$("#price").val(list[0].preco);
 				$("#hour").val(list[0].hora);
@@ -639,7 +643,7 @@ function atualizarServico(){
 		try{
 			var id = $("#ID").val();
 			var name = $("#productName").val();
-            // var photo = $("#photo").attr('src');
+            var photo = $("#photo").attr('src');
 			var descricao = $("#descricao").val();
             var date = $("#date").val();
 			var preco = $("#price").val();
@@ -668,7 +672,7 @@ function atualizarServico(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : '',
+					 photo : photo,
 					 descricao : descricao,
 					 preco : preco,
 					 hora : hour,
@@ -810,6 +814,10 @@ function carregarProduto(){
 				}
 				
 				$("#productName").val(list[0].name);
+				$("#photo")
+                .attr('src', list[0].photo)
+                .width(130)
+                .height(130);
 				$("#descricao").val(list[0].descricao);
 				$("#price").val(list[0].preco);
 				$("#stock").val(list[0].qtd_estoque);
@@ -834,7 +842,7 @@ function atualizarProduto(){
 			var id = $("#ID").val();
 			var name = $("#productName").val();
             var descricao = $("#descricao").val();
-            //var photo = $("#photo").attr('src');
+            var photo = $("#photo").attr('src');
             var price = $("#price").val();
             var stock = $("#stock").val();
             var sold = $("#sold").val();
@@ -862,7 +870,7 @@ function atualizarProduto(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : '',
+					 photo : photo,
 					 descricao : descricao,
 					 preco : price,
 					 qtd_estoque : stock,
@@ -1025,92 +1033,6 @@ function Reservar(id){
 
 function listScheduleService(){
     $(document).ready( function(){
-        // try{
-        //     var date = $("#Calendario").val();
-		// 	//console.log(date);
-        //     var n = 0;
-        //     var table;
-        //     var request = indexedDB.open("petshop", 3);
-        //
-		// 	//Abre o banco de dados e abre a tabela de animais
-		// 	request.onsuccess = function(event){
-        //         var db = event.target.result;
-        //
-        //         var transaction = db.transaction(["Animais"], "readwrite");
-        //
-        //         var store = transaction.objectStore("Animais");
-        //
-        //         var count = store.count();
-        //
-        //         count.onsuccess = function(){
-        //             n = count.result;
-        //         };
-        //
-        //         var getAll = store.getAll();
-        //
-        //         getAll.onsuccess = function(e){
-        //             table = e.target.result;
-        //             var table2 = [];
-        //             var n2 = 0;
-        //
-		// 			//Usa a funcao changeHTML para mudar o HTML da pagina de acordo com o que tem no banco de dados
-        //             for (i=0;i<n;i++){
-        //                 if(table[i].login === loggedUser){
-        //                     table2[n2] = table[i];
-        //                     n2++;
-        //                 }
-        //             }
-        //             changeHTML(table2, n2, "#animais");
-        //         };
-        //
-        //         db.close();
-        //     };
-        //
-        //     request = indexedDB.open("petshop", 3);
-		// 	n = 0;
-		// 	request.onsuccess = function(event){
-        //         var db = event.target.result;
-        //
-        //         var transaction = db.transaction(["Servicos"], "readwrite");
-        //
-        //         var store = transaction.objectStore("Servicos");
-        //
-        //         var count = store.count();
-        //
-        //         count.onsuccess = function(){
-        //             n = count.result;
-        //         };
-        //
-        //         var getAll = store.getAll();
-        //
-        //         getAll.onsuccess = function(e){
-        //             table = e.target.result;
-        //             var table2 = [];
-        //             var n2 = 0;
-		// 			////console.log(table[0].date);
-        //
-		// 			//Usa a funcao changeHTML para mudar o HTML da pagina de acordo com o que tem no banco de dados
-        //             for (i=0;i<n;i++){
-        //                 if(table[i].date === date){
-        //                     table2[n2] = table[i];
-        //                     n2++;
-        //                 }
-        //             }
-        //
-		// 			if(n2!==0){
-        //                 changeHTML(table2, n2, "#reservas");
-		// 			}else{
-		// 				alert("Não tem servico nesse dia");
-		// 			}
-        //         };
-        //
-        //         db.close();
-        //     };
-        // }catch(err){
-        //     console.log(err.message);
-        // }
-
-
         var date = $("#Calendario").val();
 
         console.log("entrou servicos");
@@ -1155,8 +1077,8 @@ function listScheduleService(){
             for (var i = 0; i < text.length; i++) {
                 text[i] = text[i].substr(1) + "}";
                 var aux = JSON.parse(text[i]);
-                console.log(aux.date);
-                console.log(date);
+                // console.log(aux.date);
+                // console.log(date);
                 if (aux.date === date) {
                     list.push();
                     n++;
@@ -1358,7 +1280,7 @@ function registerAdmin(){
 
 					data = JSON.stringify({login : login,
 						password : password,
-						photo : '',
+						photo : photo,
 						name : name,
 						email : email,
 						tel : tel,
@@ -1425,7 +1347,7 @@ function registerClient(){
 
 					data = JSON.stringify({login : login,
 						password : password,
-						photo : '',
+						photo : photo,
 						name : name,
 						email : email,
 						tel : tel,
@@ -1483,7 +1405,7 @@ function registerProduct(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : '',
+					 photo : photo,
 					 descricao : descricao,
 					 preco : price,
 					 qtd_estoque : stock,
@@ -1537,7 +1459,7 @@ function registerService(){
 				};
 
 				data = JSON.stringify({name : name,
-					 photo : '',
+					 photo : photo,
 					 descricao : descricao,
 					 preco : price,
 					 hora : hour,
@@ -1576,13 +1498,14 @@ function userLogin(){
 		xhr.onreadystatechange = function(){
 			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 				var text = xhr.responseText;
-				if(text==="ok"){
-					userNavBar();
-					userCard(userName, null);
-				}else{
+				if(text==="erro"){
 					alert("Usuario e senha inválidas");
+				}else{
+					userNavBar();
+					var inf = JSON.parse(text);
+					userCard(userName, inf.photo);
 				}
-				console.log(text);
+				// console.log(text);
 			}
 		};
 
@@ -1619,13 +1542,15 @@ function adminLogin(){
 		xhr.onreadystatechange = function(){
 			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 				var text = xhr.responseText;
-				if(text==="ok"){
-					adminNavBar();
-					adminCard(userName, null);
-				}else{
+				// console.log(text);
+				if(text==="erro"){
 					alert("Usuario e senha inválidas");
+				}else{
+					adminNavBar();
+					var inf = JSON.parse(text);
+					adminCard(userName, inf.photo);
 				}
-				console.log(text);
+				// console.log(text);
 			}
 		};
 

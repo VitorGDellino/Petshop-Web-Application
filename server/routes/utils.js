@@ -14,14 +14,14 @@ router.post('/login', function(req, res){
 	 
      User.findOne({login : username, password : password}, function(err, user){
           if(err){
-               return res.status(200).send("Ocorreu um erro");
+               return res.status(500).send("erro");
           }
 
           if(!user){
-               return res.status(200).send("Usuário e Senha inválidos");
+               return res.status(404).send("erro");
           }
 
-          return res.status(200).send("ok");
+          return res.status(200).send(user);
      });
      //Checando no BD
 });
@@ -32,14 +32,16 @@ router.post('/loginAdmin', function(req, res){
 
      User.findOne({login : username, password : password, isAdmin : true}, function(err, user){
           if(err){
-               return res.status(200).send("Ocorreu um erro");
+               return res.status(500).send("erro");
           }
 
           if(!user){
-               return res.status(200).send("Usuário e Senha inválidos");
+               return res.status(404).send("erro");
           }
-
-          return res.status(200).send("ok");
+		
+		  console.log("ta aqui");
+          return res.status(200).send(user);
+		  
      });
      //Checando no BD
 });
