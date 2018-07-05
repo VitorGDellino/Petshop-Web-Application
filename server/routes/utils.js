@@ -8,17 +8,17 @@ var Sale = require('../lib/sale');
 router.post('/login', function(req, res){
      var username = req.body.login;
      var password = req.body.password;
-
+	 
 	 console.log(username);
 	 console.log(password);
-
+	 
      User.findOne({login : username, password : password}, function(err, user){
           if(err){
                return res.status(500).send("erro");
           }
 
           if(!user){
-               return res.status(200).send("Usuário e Senha inválidos");
+               return res.status(404).send("erro");
           }
 
           return res.status(200).send(user);
@@ -63,7 +63,7 @@ router.get('/products', function(req, res){
 
 router.get('/products/:id', function(req, res){
      var id = req.params.id;
-
+	 
      Product.find({_id : id}, function(err, foundProduct){
           if(err){
                return res.status(500).send("erro");
@@ -108,7 +108,6 @@ router.get('/servicesById/:id', function(req, res){
 
 router.get('/services/:date', function(req, res){
      var date = req.params.date;
-     // console.log("ta aqui "+date);
      Service.find({date : date}, function(err, foundService){
           if(err){
                return res.status(500).send();
