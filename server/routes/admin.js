@@ -91,104 +91,104 @@ router.post('/products', function(req, res){
 
 router.put('/products/:id', function(req, res){
 	var id = req.params.id;
-	
+
 	Product.findOne({_id : id}, function(err, foundProduct){
           if(err){
 			return res.status(500).send();
 		}
-		
+
 		if(!foundProduct){
 			return res.status(404).send();
 		}
-		
+
 		if(req.body.name){
 			foundProduct.name = req.body.name;
 		}
-		
+
 		if(req.body.photo){
-			foundProduct.photo = req.body.photo; 
+			foundProduct.photo = req.body.photo;
 		}
-		
+
 		if(req.body.descricao){
 			foundProduct.descricao = req.body.descricao;
 		}
-		
+
 		if(req.body.preco){
 			foundProduct.preco = req.body.preco;
 		}
-		
+
 		if(req.body.qtd_estoque){
 			foundProduct.qtd_estoque = req.body.qtd_estoque;
 		}
-		
+
 		if(req.body.qtd_vendida){
-			foundProduct.qtd_vendida =req.body.qtd_vendida; 
+			foundProduct.qtd_vendida =req.body.qtd_vendida;
 		}
-		
+
 		foundProduct.save( function(err, updateproduct){
 			if(err){
 				return res.status(500).send();
 			}
-			
+
 			if(!updateproduct){
 				return res.status(404).send();
 			}
-			
+
 			return res.send("ok");
 		});
      });
-	
+
 });
 
 router.put('/services/:id', function(req, res){
 	var id = req.params.id;
-	
+
 	Service.findOne({_id : id}, function(err, foundService){
           if(err){
 			return res.status(500).send();
 		}
-		
+
 		if(!foundService){
 			return res.status(404).send();
 		}
-		
+
 		if(req.body.name){
 			foundService.name = req.body.name;
 		}
-		
+
 		if(req.body.photo){
-			foundService.photo = req.body.photo; 
+			foundService.photo = req.body.photo;
 		}
-		
+
 		if(req.body.descricao){
 			foundService.descricao = req.body.descricao;
 		}
-		
+
 		if(req.body.preco){
 			foundService.preco = req.body.preco;
 		}
-		
+
 		if(req.body.hora){
 			foundService.hora = req.body.hora;
 		}
-		
+
 		if(req.body.date){
-			foundService.date = req.body.date; 
+			foundService.date = req.body.date;
 		}
-		
+
 		foundService.save( function(err, updateservice){
 			if(err){
 				return res.status(500).send("erro");
 			}
-			
+
 			if(!updateservice){
 				return res.status(404).send("erro");
 			}
-			
+
 			return res.send("ok");
 		});
      });
-	
+
 });
 
 router.post('/services', function(req, res){
