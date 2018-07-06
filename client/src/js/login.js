@@ -1439,7 +1439,7 @@ function adminLogin(){
 				if(text==="erro"){
 					alert("Usuario e senha inválidas");
 				}else{
-					userNavBar();
+					adminNavBar();
 					var inf = JSON.parse(text);
 					adminCard(userName, inf.photo);
 				}
