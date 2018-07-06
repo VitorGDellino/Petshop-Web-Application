@@ -12,7 +12,19 @@ function goToHome(){
         $("#mutableContent").load("../html/home.html");
         state = 0;
     });
+}
 
+function goToSaleReport(){
+     $(document).ready( function(){
+        if(state == 0){
+            $("#mutableContent").load("../html/results.html");
+            document.body.style.backgroundImage = "none";
+        }else{
+            $("#mutableMiddleColumn").load("../html/colunameioresults.html");
+        }
+        state = 1;
+        listSaleReport();
+    });
 }
 
 //Funcao que carrega a pagina de produtos
@@ -947,7 +959,14 @@ function changeHTML(table, n, id){
             console.log(typeof(table[i]._id), table[i]._id);
             eachline += '<li><img src="'+ table[i].petPhoto+ '" alt="Someone" style="width:130px; height:130px;"/><br>Nome: ' + table[i].petName + "<br>Raça: " + table[i].race + "<br>Idade: " + table[i].age.toString() + "<br>" + '<a><button class="btn" type="button" id="'+table[i]._id.toString()+'"onclick="goToEditPet(this.id)">Atualizar</button></a><button class="btn" type="button"  id="'+table[i]._id.toString()+'"onclick="deletePet(this.id)">Deletar</button><br></li>';
         }
-    }
+   }else if(id === "#vendas"){
+        console.log("Deu certo");
+        var eachline = "<tr><th>Id</th><th>Comprador</th><th>Produtos e Quantidades</th><th>Valor da Compra</th>";
+        for(i=0; i<n; i++){
+            eachline += "<tr><td>"+ table[i]._id+"</td><td>"+ table[i].user+"</td><td>"+table[i].itens+"</td><td>"+table[i].total.toString()+"</td>";
+        }
+        console.log(eachline);
+   }
     //console.log(id);
     $(id).html(eachline);
 }
@@ -1090,6 +1109,42 @@ function listStock(){
         xhr.send(null);
     });
 
+}
+
+function listSaleReport(){
+     $(document).ready( function(){
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/utils/sale", true);
+
+        xhr.onload = function() {
+            var text = xhr.responseText;
+            // console.log(JSON.parse(text).length);
+            // console.log(text);
+            text = text.split("}")
+            text.pop();
+            // console.log(text)
+            list = []
+            for (var i = 0; i < text.length; i++) {
+                text[i] = text[i].substr(1) + "}";
+                list.push(JSON.parse(text[i]));
+            }
+
+            var total = 0;
+            for(i=0;i<list.length;i++){
+                 total += list[i].total;
+            }
+
+            console.log(list);
+            console.log(total);
+            changeHTML(list, list.length, "#vendas");
+            $("#total").html(total.toString());
+        };
+        xhr.onerror = function() {
+          alert('Woops, there was an error making the request.');
+        };
+        xhr.send(null);
+    });
 }
 
 //Funcao para listar os servicos
