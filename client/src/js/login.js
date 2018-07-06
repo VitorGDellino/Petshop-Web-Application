@@ -504,15 +504,15 @@ function editProfile(){
             xhr.setRequestHeader("Content-Type", "application/json");
 
             xhr.onreadystatechange = function() {
-                 if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-                      var text = xhr.responseText;
-                      if(text==="OK"){
-                           alert("Alteração efetuada com sucesso");
-                           goToHome();
-                      }else{
-                           alert("Erro na alteração");
-                      }
-                 }
+                if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+                    var text = xhr.responseText;
+                    if(text==="OK"){
+                        alert("Atualizado com sucesso");
+                        goToHome();
+                    }else{
+                        alert("Erro para atualizar");
+                    }
+                }
             };
 
             data = JSON.stringify({name: newName, photo: newPhoto, password: oldPassWord, newPassWord: newPassWord, newPassWord2: newPassWord2, address: newAdress, tel: newTel, email: newEmail});
