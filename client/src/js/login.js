@@ -1422,19 +1422,32 @@ function adminLogin(){
 		xhr.setRequestHeader("Content-Type", "application/json");
 
 		xhr.onreadystatechange = function(){
-			if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+			// if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+			// 	var text = xhr.responseText;
+			// 	// console.log(text);
+			// 	if(text==="erro"){
+			// 		alert("Usuario e senha inválidas");
+			// 	}else{
+			// 		adminNavBar();
+			// 		var inf = JSON.parse(text);
+			// 		adminCard(userName, inf.photo);
+			// 	}
+			// 	// console.log(text);
+			// }
+            if(this.readyState == XMLHttpRequest.DONE && this.status == 200) {
 				var text = xhr.responseText;
-				// console.log(text);
 				if(text==="erro"){
 					alert("Usuario e senha inválidas");
 				}else{
-					adminNavBar();
+					userNavBar();
 					var inf = JSON.parse(text);
 					adminCard(userName, inf.photo);
 				}
 				// console.log(text);
-			}
-		};
+			} else if (this.readyState == XMLHttpRequest.DONE){
+                alert('Usuário ou senha inválidos');
+            }
+        };
 
 		data = JSON.stringify({login: userName,password: passWord});
 		//console.log(data);
