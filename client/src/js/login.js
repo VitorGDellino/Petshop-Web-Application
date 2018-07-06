@@ -935,9 +935,9 @@ function changeHTML(table, n, id){
             console.log(n);
 			if(table[i].reserva==="none"){
                 console.log("aqui");
-				eachline += '<li><font size="3"> HORÁRIO LIVRE </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+"<br>" + '<br>Preço: R$'+table[i].preco+"<br>" + '<a><button id="'+table[i]._id+'" class="btn" type="button" onClick="Reservar(this.id);">Reservar</button></a></li>';
+				eachline += '<li><font size="3"> HORÁRIO LIVRE </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: <br>Preço: R$'+table[i].preco+"<br>" + '<a><button id="'+table[i]._id+'" class="btn" type="button" onClick="Reservar(this.id);">Reservar</button></a></li>';
 			}else{
-				eachline += '<li><font size="3" color="red"> HORÁRIO RESERVADO </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+ "<br>" + '<a><button  id="'+table[i]._id+'"class="btn" type="button" onClick="Reservar(this.id);">Reservar</button></a></li>';
+				eachline += '<li><font size="3" color="red"> HORÁRIO RESERVADO </font>Servico: '+table[i].name+'<br><img src="'+table[i].photo+'" alt="Someone" style="width:130px; height:130px;"><br>Animal: '+table[i].reserva+ "<br>" + '<a><button  id="'+table[i]._id+'"class="btn" type="button" disabled onClick="Reservar(this.id);">Reservar</button></a></li>';
 			}
 		}
     }else if(id === "#pets"){
@@ -970,6 +970,7 @@ function Reservar(id){
         data = JSON.stringify({id: id, petname: pet, user: loggedUser});
         console.log(data);
         xhr.send(data);
+        listScheduleService();
     });
 }
 
@@ -1347,10 +1348,9 @@ function registerService(){
 					 descricao : descricao,
 					 preco : price,
 					 hora : hour,
-					 date : date,
-					 reserva : ''
+					 date : date
 				});
-				console.log(data);
+				// console.log(data);
 				xhr.send(data);
 
             }else{
@@ -1369,10 +1369,6 @@ function userLogin(){
         var passWord = document.getElementById("login").elements.namedItem("passWord").value;
         loggedUser = userName;
 
-        //console.log(userName);
-        //console.log(passWord);
-		//Pega os valores das txtbox do html
-
 		var xhr = new XMLHttpRequest();
 
 		xhr.open("POST", "http://localhost:3000/utils/login", true);
@@ -1390,7 +1386,9 @@ function userLogin(){
 					userCard(userName, inf.photo);
 				}
 				// console.log(text);
-			}
+			} else if (this.readyState == XMLHttpRequest.DONE){
+                alert('Usuário ou senha inválidos');
+            }
 		};
 
 		data = JSON.stringify({login: userName,password: passWord});
