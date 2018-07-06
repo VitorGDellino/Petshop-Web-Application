@@ -1,0 +1,26 @@
+Jorge Hideki Motokubo Halker	9292945
+Raul Wagner Martins Costa		9293032
+Vitor Giovani Dellinocente		9277875
+
+	Na pasta client
+		Os arquivos submetidos estaõ separados em pastas dentro da pasta source, menos o index.html.
+		Na pasta assets temos:
+			Imagens usadas no site em geral
+		Na pasta css temos:
+			o style.css para as paginas HTML
+		Na pasta html temos:
+			Estao os .html, cada arquivo html tem um pedaço que é carregado de acordo de acordo com o botao clicado
+		Na pasta images temos duas pastas:
+			pets que contem:
+				imagens dos animais
+			users que contem:
+				imagens dos usuarios cadastrados
+		Na pasta js temos:
+			O javascript db.js que cria o banco de dados e ja insere alguns registros no bd
+			O javascript login.js que tem todas as funcoes, tendo funcoes de carregar os htmls da pasta html e fazer consultas, cadastro e deleções do banco de dados, todas as funcoes em login.js estao comentadas para entender melhor o que cada uma esta fazendo
+			
+	Na pasta data
+		Tem os arquivos q vao ser criados quando rodar o bd
+		
+	Na pasta server tem os arquivos para que o server seja rodado e responda as requisicoes feitas pelo client
+		O arquivo insertdata.js é para fazer os dados iniciais do bd

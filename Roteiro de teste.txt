@@ -1,0 +1,122 @@
+﻿Fazer os comandos no Windows:
+Abra 2 promts de comando na pasta Petshop-Web-Application
+	com o primeiro promt de comando rodar o comando:
+		mongod --dbpath ./data
+	com o segundo promt de comando rodar os comandos na ordem:
+		mongo
+		use petshop
+
+Abra 2 promts de comando na pasta Petshop-Web-Application/server
+	com o primeiro promt de comando rodar o comando:
+		npm start
+	com o segundo promt de comando rodar o comando:
+		node insertdata.js
+
+É necessario que tenha um servidor para rodar o client
+Abra 1 promt de comando na pasta Petshop-Web-Application/client/src
+	Rode o comando:
+		static server 
+
+
+Login errado:
+	Username: Vitor
+	Senha: 1234
+	
+	Vai aparecer a mensagem de usuario e senha invalidos
+	
+Logar como admin
+	Username: vitor
+	Senha: 123
+	
+	Vai entrar na parte de administrador
+
+Cadastro de cliente
+	Clique no botao "cadastrar cliente"
+	Preencha todos os campos, não é possivel deixar campos vazios, lembrar do login e senha criados para usar depois
+		Exemplo de login e senha:
+			Login: clienteBanana
+			Senha: 123
+
+Cadastro do administrador
+	Clique no botao "cadastrar administrador"
+	Preencha todos os campos, não é possivel deixar campos vazios, lembrar do login e senha criados para usar depois
+		Exemplo de login e senha:
+			Login: adminBanana
+			Senha: 123
+
+Funcionalidade de listar serviços existentes
+	Clicar no bota de gerenciar serviços
+			
+Cadastro de serviço
+	Clicar no botao de gerenciar serviços
+	Clicar no botao de cadastrar serviços
+	Fazer um cadastro de serviço, use numero inteiro no campo de horas
+	Faca um cadastro contendo a data do dia atual para ser usado posteriormente e nao mude e nem delete o servico
+	
+Atualizar um serviço
+	Clicar no botao de gerenciar serviços
+	Copiar um id listado
+	Clicar no botao de atualizar serviços
+	Colar o id, clique em recarregar e depois altere o que quiser e clique em finalizar
+	
+Deletar um serviço
+	Clicar no botao de gerenciar serviços
+	Copiar um id listado
+	Clicar no botao de deletar serviços
+	Colar o id, clique em recarregar e depois clique em finalizar
+	
+Funcionalidade de listar estoque existentes
+	Clicar no botao de gerenciar estoque
+			
+Cadastro de estoque
+	Clicar no botao de gerenciar estoque
+	Clicar no botao de cadastrar estoque
+	Fazer um cadastro de estoque
+	Faca um cadastro contendo quantidade em estoque maior q quantidade vendida para que seja possivel fazer compra depois
+	
+Atualizar um estoque
+	Clicar no botao de gerenciar estoque
+	Copiar um id listado
+	Clicar no botao de atualizar estoque
+	Colar o id, clique em recarregar e depois altere o que quiser e clique em finalizar
+	
+Deletar um serviço
+	Clicar no botao de gerenciar estoque
+	Copiar um id listado
+	Clicar no botao de deletar estoque
+	Colar o id, clique em recarregar e depois clique em finalizar
+
+Clique no botao de relatorio de vendas e é possivel verificar que nada foi vendido ainda
+	
+	
+Clique no botao logout e logue com o usuario cadastrado anteriormente
+	Login: clienteBanana
+	Senha: 123
+
+Agendar horario
+	Escolha o dia 05/07/2018, selecione o animal que vai usar o servico, preencha o cartao de credito, aperte no botao reservar do serviço escolhido e o horario ja vai ser reservado, se clicar novamente vai aparecer a mensagem que o horario esta indisponivel
+	
+Comprar produto
+	Selecione a quantidade de um produto e clique no carrinho respectivo do produto, repita quantas vezes quiser com os produtos que quiser, clique em finalizar, coloque o cartao de credito e clique em finalizar
+
+Editar Registro
+	Mude a foto do login e insira a senha e clique em editar
+	Se vc deslogar e logar de novo a foto do usuario vai estar alterada
+
+Botao Cadastrar/Listar animais
+	Lista os animais ja cadastrados
+	
+Cadastrar animais
+	Preencha os campos do animal com o que preferir e clique em finalizar
+
+Atualizar animais
+	Clique no botao atualizar de um pet especifico e mude os campos que voce quer alterar, os que voce nao quiser alterar deixe em branco
+
+Deletar animais
+	Clique no botao de deletar e confirme
+
+Clique no botao logout e logue como o administrador
+	Login: adminBanana
+	Senha: 123
+	
+Clique no botao relatorio de vendas e la vai ter as vendas realizadas
