@@ -1,0 +1,1 @@
+﻿Tivemos um único bug notável que foi, quando criávamos um banco usando o mongoDB, quando iamos listar o estoque, servicos e etc, as vezes ele nao listava, mas quando clica-se novamente na aba ele lista normalmente. Lembrando que isso nem sempre acontece e observamos esses acontecimentos apenas após a criação de um novo banco de dados.
